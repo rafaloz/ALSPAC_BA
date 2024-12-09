@@ -529,8 +529,6 @@ merged_df.to_csv('ALSPAC_II_merged_II.csv', index=False)
 U1, p_value = stats.ttest_ind(healthyALSPAC['brainPAD_standardized'], crazyALSPAC['brainPAD_standardized'], equal_var=True)
 print('T-test p values:'+str(p_value))
 
-merged_df['n_euler'] = 2
-
 print('--------------------------------')
 print('====== PairWise ANALYSIS =======')
 print('--------------------------------')
