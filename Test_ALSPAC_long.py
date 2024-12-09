@@ -158,8 +158,6 @@ print("Cohen's D 1_2: "+str(cohen_d_1_2))
 print("Cohen's D 1_3: "+str(cohen_d_1_3))
 print("Cohen's D 2_3: "+str(cohen_d_2_3))
 
-longi_todos['n_euler'] = 2
-
 # Create a dictionary to map the old values to new values
 mapping = {
     'NoPersistente': 0,
