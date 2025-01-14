@@ -8,7 +8,6 @@ from sklearn.metrics import mean_absolute_percentage_error
 from sklearn.neural_network import MLPRegressor
 
 from sklearn.linear_model import LinearRegression
-import statsmodels.formula.api as smf
 from scipy.stats import pearsonr
 
 import statsmodels.api as sm
@@ -325,17 +324,14 @@ def execute_in_val_and_test_NN(data_train_filtered, edades_train, data_val_filte
 
     return MAEs_and_rs_test
 
-# Función para ajustar el GLM y devolver el coeficiente de interés
 def fit_glm_and_get_coef(data, formula, coef_name):
     model = glm(formula=formula, data=data, family=sm.families.Gaussian()).fit()
     return model.params[coef_name]
 
-# Función para ajustar el GLM y devolver todos los coefs
 def fit_glm_and_get_all_coef(data, formula):
     model = glm(formula=formula, data=data, family=sm.families.Gaussian()).fit()
     return model.params
 
-# Define a function to perform the t-test, Welch's test, or U Mann-Whitney test
 def perform_tests(group0, group1):
     stat, p_value = ttest_ind(group0, group1)
     return stat
@@ -421,7 +417,6 @@ def rain_cloud_plot(df_prev_copy):
     plt.title('Raincloud Plot with Violin for BrainPAD by Group (Axes Switched)', fontweight='bold')
 
     plt.show()
-
 
 def rain_cloud_plot_II(df_prev_copy):
     import matplotlib.pyplot as plt
@@ -516,10 +511,8 @@ def rain_cloud_plot_II(df_prev_copy):
 
     plt.show()
 
-
 def rain_cloud_plot_III(df_prev_copy):
     import matplotlib
-    matplotlib.use('svg')
     import matplotlib.pyplot as plt
     import seaborn as sns
     import numpy as np
@@ -646,8 +639,7 @@ def rain_cloud_plot_III(df_prev_copy):
     plt.ylabel('brainPAD_standardized', fontweight='bold')
     plt.title('Violin Plot', fontweight='bold')
 
-    plt.savefig('III_7_40_plot.svg')
-
+    plt.show()
 
 def generate_generic_data():
     np.random.seed(42)  # Set seed for reproducibility
@@ -665,7 +657,6 @@ def generate_generic_data():
     }
 
     return pd.DataFrame(data)
-
 
 def rain_cloud_plot_V(df):
 
@@ -774,8 +765,7 @@ def rain_cloud_plot_V(df):
     plt.ylabel('brainPAD_standardized', fontweight='bold')
     plt.title('Violin Plot for standardized brainPAD by group', fontweight='bold')
 
-    plt.savefig('V_7_40_plot.svg')
-
+    plt.show()
 
 def rain_cloud_plot_IV(df_prev_copy):
     import matplotlib.pyplot as plt
@@ -907,7 +897,6 @@ def rain_cloud_plot_IV(df_prev_copy):
 
     plt.show()
 
-
 def rain_cloud_plot_VI(df_prev_copy):
     import matplotlib.pyplot as plt
     import seaborn as sns
@@ -1032,7 +1021,6 @@ def rain_cloud_plot_VI(df_prev_copy):
 
     plt.show()
 
-
 def rain_cloud_plot_VIII(df):
 
     # Function to convert HEX to RGB
@@ -1136,7 +1124,6 @@ def rain_cloud_plot_VIII(df):
 
     plt.show()
 
-
 def rain_cloud_plot_VII(df):
 
     # Function to convert HEX to RGB
@@ -1239,7 +1226,6 @@ def rain_cloud_plot_VII(df):
     plt.title('Violin Plot for brainPAD_standardized by grupo', fontweight='bold')
 
     plt.show()
-
 
 def rain_cloud_plot_colors(df):
     import numpy as np
@@ -1416,7 +1402,7 @@ def model_evaluation_modified(X_test, results):
     X_test_df = pd.read_csv(X_test)
 
     etiv = X_test_df['eTIV'].values.tolist()
-    edades_test = X_test_df['Edad'].values.tolist()
+    edades_test = X_test_df['Age'].values.tolist()
 
     # Load Model
     file_path = ('/home/rafa/PycharmProjects/ALSPAC_BA/Model/SimpleMLP_nfeats_100_fold_0.pkl')
@@ -1436,10 +1422,60 @@ def model_evaluation_modified(X_test, results):
     intercept = model.intercept_
 
     # Age bias correction
-    results['pred_Edad_c'] = (prediction - intercept) / slope
-    results['pred_Edad'] = prediction
+    results['pred_Age_c'] = (prediction - intercept) / slope
+    results['pred_Age'] = prediction
+    results['BrainPAD'] = results['pred_Age_c'] - edades_test
+    results['eTIV'] = etiv
+
+    return results
+
+def model_evaluation(X_train, X_test, results, features):
+    etiv = X_test['eTIV'].values.tolist()
+
+    edades_train = X_train['Edad'].values
+    edades_test = results['Edad'].values
+
+    X_train = X_train[features]
+    X_test = X_test[features]
+
+    # aplico la eliminación de outliers
+    X_train, X_test = outlier_flattening(X_train, X_test)
+
+    # 3.- normalizo los datos OJO LA NORMALIZACION QUE CON Z NORM O CON 0-1 PUEDE VARIAR EL RESULTADO BASTANTE!
+    X_train, X_test = normalize_data_min_max(X_train, X_test, (-1, 1))
+
+    X_train_df = pd.DataFrame(X_train)
+    X_train_df.columns = features
+    X_test_df = pd.DataFrame(X_test)
+    X_test_df.columns = features
+    X_test_df['Edad'] = edades_test
+    X_train_df['Edad'] = edades_train
+
+    X_test_df['eTIV'] = etiv
+
+    X_test_df.to_csv('data_test_ALSPAC_II.csv', index=False)
+
+    file_path = ('/home/rafa/PycharmProjects/Cardiff_ALSPAC/modelos/modelo_morfo_100_Cardiff_balanced_WAND/SimpleMLP_nfeats_100_fold_0.pkl')
+    with open(file_path, 'rb') as file:
+        regresor = pickle.load(file)
+
+    pred_test_median = regresor.predict(X_test)
+
+    # bias correction
+    df_bias_correction = pd.read_csv('/home/rafa/PycharmProjects/Cardiff_ALSPAC/modelos/modelo_morfo_100_Cardiff_balanced_WAND/DataFrame_bias_correction.csv')
+
+    model = LinearRegression()
+    model.fit(df_bias_correction[['edades_train']], df_bias_correction['pred_train'])
+
+    slope = model.coef_[0]
+    intercept = model.intercept_
+
+    results['pred_Edad_c'] = (pred_test_median - intercept) / slope
+    results['pred_Edad'] = pred_test_median
     results['BrainPAD'] = results['pred_Edad_c'] - edades_test
     results['eTIV'] = etiv
+
+    results.rename(columns={'sexo(M=1;F=0)': 'sexo'}, inplace=True)
 
     return results
 
@@ -1460,5 +1496,38 @@ def calculate_metrics(y_true, y_pred):
     r, _ = pearsonr(y_true, y_pred)
     r2 = r2_score(y_true, y_pred)
     return mae, r, r2
+
+def standardize_with_control(control_df, target_df, gender_col, value_col, scaler_men, scaler_women):
+    """
+    Standardize a specified column in the target DataFrame using scalers fitted on the control DataFrame.
+
+    Args:
+    - control_df (pd.DataFrame): The DataFrame used to fit the scalers.
+    - target_df (pd.DataFrame): The DataFrame to apply the standardization.
+    - gender_col (str): Column indicating gender (1 for men, 0 for women).
+    - value_col (str): Column to standardize.
+    - scaler_men (StandardScaler): Scaler for men.
+    - scaler_women (StandardScaler): Scaler for women.
+
+    Returns:
+    - pd.DataFrame: A DataFrame with standardized values added as a new column.
+    """
+    # Split control group by gender
+    control_men = control_df[control_df[gender_col] == 1].copy()
+    control_women = control_df[control_df[gender_col] == 0].copy()
+
+    # Fit the scalers on the control group
+    scaler_men.fit(control_men[[value_col]])
+    scaler_women.fit(control_women[[value_col]])
+
+    # Split target DataFrame by gender
+    target_men = target_df[target_df[gender_col] == 1].copy()
+    target_women = target_df[target_df[gender_col] == 0].copy()
+
+    # Apply the scalers to the target DataFrame
+    target_men['brainPAD_standardized'] = scaler_men.transform(target_men[[value_col]])
+    target_women['brainPAD_standardized'] = scaler_women.transform(target_women[[value_col]])
+
+    return pd.concat([target_men, target_women], axis=0)
 
 

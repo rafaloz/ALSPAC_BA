@@ -21,32 +21,15 @@ PEs_ALSPAC_1 = results_Cardiff[results_Cardiff['pliks18TH'] == 1].copy()
 PEs_ALSPAC_2 = results_Cardiff[results_Cardiff['pliks18TH'] == 2].copy()
 PEs_ALSPAC_3 = results_Cardiff[results_Cardiff['pliks18TH'] == 3].copy()
 
+# Initialize scalers
 scaler_men = StandardScaler()
-scaler_woman = StandardScaler()
+scaler_women = StandardScaler()
 
-controlALSPAC_men = controlALSPAC[controlALSPAC['sexo']==1]
-controlALSPAC_woman = controlALSPAC[controlALSPAC['sexo']==0]
-controlALSPAC_men['brainPAD_standardized'] = scaler_men.fit_transform(controlALSPAC_men[['BrainPAD']])
-controlALSPAC_woman['brainPAD_standardized'] = scaler_woman.fit_transform(controlALSPAC_woman[['BrainPAD']])
-controlALSPAC = pd.concat([controlALSPAC_men, controlALSPAC_woman], axis=0)
-
-PEs_ALSPAC_1_men = PEs_ALSPAC_1[PEs_ALSPAC_1['sexo']==1]
-PEs_ALSPAC_1_woman = PEs_ALSPAC_1[PEs_ALSPAC_1['sexo']==0]
-PEs_ALSPAC_1_men['brainPAD_standardized'] = scaler_men.transform(PEs_ALSPAC_1_men[['BrainPAD']])
-PEs_ALSPAC_1_woman['brainPAD_standardized'] = scaler_woman.transform(PEs_ALSPAC_1_woman[['BrainPAD']])
-PEs_ALSPAC_1 = pd.concat([PEs_ALSPAC_1_men, PEs_ALSPAC_1_woman], axis=0)
-
-PEs_ALSPAC_2_men = PEs_ALSPAC_2[PEs_ALSPAC_2['sexo']==1]
-PEs_ALSPAC_2_woman = PEs_ALSPAC_2[PEs_ALSPAC_2['sexo']==0]
-PEs_ALSPAC_2_men['brainPAD_standardized'] = scaler_men.transform(PEs_ALSPAC_2_men[['BrainPAD']])
-PEs_ALSPAC_2_woman['brainPAD_standardized'] = scaler_woman.transform(PEs_ALSPAC_2_woman[['BrainPAD']])
-PEs_ALSPAC_2 = pd.concat([PEs_ALSPAC_2_men, PEs_ALSPAC_2_woman], axis=0)
-
-PEs_ALSPAC_3_men = PEs_ALSPAC_3[PEs_ALSPAC_3['sexo']==1]
-PEs_ALSPAC_3_woman = PEs_ALSPAC_3[PEs_ALSPAC_3['sexo']==0]
-PEs_ALSPAC_3_men['brainPAD_standardized'] = scaler_men.transform(PEs_ALSPAC_3_men[['BrainPAD']])
-PEs_ALSPAC_3_woman['brainPAD_standardized'] = scaler_woman.transform(PEs_ALSPAC_3_woman[['BrainPAD']])
-PEs_ALSPAC_3 = pd.concat([PEs_ALSPAC_3_men, PEs_ALSPAC_3_woman], axis=0)
+# Train the scalers on the control group and apply them to other groups
+controlALSPAC = standardize_with_control(controlALSPAC, controlALSPAC, 'sex', 'BrainPAD', scaler_men, scaler_women)
+PEs_ALSPAC_1 = standardize_with_control(controlALSPAC, PEs_ALSPAC_1, 'sex', 'BrainPAD', scaler_men, scaler_women)
+PEs_ALSPAC_2 = standardize_with_control(controlALSPAC, PEs_ALSPAC_2, 'sex', 'BrainPAD', scaler_men, scaler_women)
+PEs_ALSPAC_3 = standardize_with_control(controlALSPAC, PEs_ALSPAC_3, 'sex', 'BrainPAD', scaler_men, scaler_women)
 
 controlALSPAC.loc[:, 'Group'] = 'Controls'
 PEs_ALSPAC_1.loc[:, 'Group'] = 'PEs_1'
@@ -54,29 +37,23 @@ PEs_ALSPAC_2.loc[:, 'Group'] = 'PEs_2'
 PEs_ALSPAC_3.loc[:, 'Group'] = 'PEs_3'
 
 PEs_ALSPAC = pd.concat([PEs_ALSPAC_1, PEs_ALSPAC_2, PEs_ALSPAC_3], axis=0)
-
 Results_ALSPAC = pd.concat([controlALSPAC, PEs_ALSPAC], axis=0)
 
 # Assuming datos_table_1 is your DataFrame
 summary_stats = Results_ALSPAC.groupby('Group').agg(
     num_cases=('ID', 'count'),
-    mean_age=('Edad', 'mean'),
-    std_age=('Edad', 'std'),
-    age_range_min=('Edad', 'min'),
-    age_range_max=('Edad', 'max'),
-    num_males=('sexo', lambda x: (x == 1).sum()),
-    num_females=('sexo', lambda x: (x == 0).sum())
+    mean_age=('Age', 'mean'),
+    std_age=('Age', 'std'),
+    age_range_min=('Age', 'min'),
+    age_range_max=('Age', 'max'),
+    num_males=('sex', lambda x: (x == 1).sum()),
+    num_females=('sex', lambda x: (x == 0).sum())
 )
 
 summary_stats = summary_stats.sort_index()
 summary_stats = summary_stats.round(2)
 
-pd.set_option('display.max_rows', 1000)  # Set to a high number of rows you want to see
-pd.set_option('display.max_columns', 100)  # Set to a high number of columns
-
-PEs_ALSPAC['Group'] = 'PE_1-3'
-
-print(summary_stats)
+print(summary_stats.to_string(), '\n')
 
 # List of groups and their labels
 groups = {
@@ -101,26 +78,26 @@ print("       Brain Age Gap Cohen's D Calculation Among Groups         ")
 print("=" * 65)
 
 for key, value in results.items():
-    print(f"Cohen's D {key}: {round(value, 2)}")
+    print(f"Cohen's D {key}: {value:.3}")
 
 print("=" * 65)
 
-print('\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-print('^^^^^^^^^^^^^^^^^^^ MAE r R2 regressor predictions ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n')
+print('^' *74)
+print('^^^^^^^^^^^^^^^^^^^ MAE r R2 regressor predictions ^^^^^^^^^^^^^^^^^^^^^^^^')
+print('^' *74)
 
-mae = mean_absolute_error(controlALSPAC['Edad'], controlALSPAC['pred_Edad'])
-r, _ = pearsonr(controlALSPAC['Edad'], controlALSPAC['pred_Edad'])
-r2 = r2_score(controlALSPAC['Edad'], controlALSPAC['pred_Edad'])
+mae = mean_absolute_error(controlALSPAC['Age'], controlALSPAC['pred_Age'])
+r, _ = pearsonr(controlALSPAC['Age'], controlALSPAC['pred_Age'])
+r2 = r2_score(controlALSPAC['Age'], controlALSPAC['pred_Age'])
 
 print(f"######################## Control group ###########################")
 print(f"Mean Absolute Error (MAE): {mae:.3}")
 print(f"Pearson Correlation Coefficient (r): {r:.2}")
 print(f"Coefficient of Determination (R2): {r2:.2}")
 
-mae = mean_absolute_error(PEs_ALSPAC['Edad'], PEs_ALSPAC['pred_Edad'])
-r, _ = pearsonr(PEs_ALSPAC['Edad'], PEs_ALSPAC['pred_Edad'])
-r2 = r2_score(PEs_ALSPAC['Edad'], PEs_ALSPAC['pred_Edad'])
+mae = mean_absolute_error(PEs_ALSPAC['Age'], PEs_ALSPAC['pred_Age'])
+r, _ = pearsonr(PEs_ALSPAC['Age'], PEs_ALSPAC['pred_Age'])
+r2 = r2_score(PEs_ALSPAC['Age'], PEs_ALSPAC['pred_Age'])
 
 print(f"######################## PEs group ##############################")
 print(f"Mean Absolute Error (MAE): {mae:.3}")
@@ -130,37 +107,38 @@ print(f"Coefficient of Determination (R2): {r2:.2}")
 print('\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
 print('^^^^^^^^^^^^^^^^^ ASSESING GROUP COMPARABILITY FOR AGE AND SEX ^^^^^^^^^^^^^^^^^^^^^^^^')
 print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n')
+
 # Check Normality for Age in both groups using the kstest test
 print("Checking Normality of Age Distribution:")
 for group, name in [(controlALSPAC, "Controls"), (PEs_ALSPAC, "PEs")]:
     # Use Shapiro-Wilk test instead of KS test
-    stat, p_value = stats.shapiro(group['Edad'])
-    print(f"{name} Group - Shapiro-Wilk Test: Stat={round(value, 3)}, P-value={p_value:.2e}")
+    stat, p_value = stats.shapiro(group['Age'])
+    print(f"{name} Group - Shapiro-Wilk Test: Stat={value:.3}, P-value={p_value:.2e}")
     if p_value < 0.05:
         print(f"The age distribution for the {name} group does not appear to be normal.\n")
     else:
         print(f"The age distribution for the {name} group appears to be normal.\n")
 
 # Check Equality of Variances using Levene's test
-stat, p_value = stats.levene(controlALSPAC['Edad'], PEs_ALSPAC['Edad'])
-print(f"Levene’s Test for Equality of Variances: Stat={round(stat, 3)}, P-value={p_value:.2e}")
+stat, p_value = stats.levene(controlALSPAC['Age'], PEs_ALSPAC['Age'])
+print(f"Levene’s Test for Equality of Variances: Stat={stat:.3}, P-value={p_value:.2e}")
 if p_value < 0.05:
     print("Variances of the age distributions between the groups are significantly different.\n")
 else:
     print("No significant difference in variances of the age distributions between the groups.\n")
 
 # Welch's mann-whitney for Age assuming unequal variances
-t_stat, p_value_age = stats.mannwhitneyu(controlALSPAC['Edad'], PEs_ALSPAC['Edad'], alternative='two-sided')
+t_stat, p_value_age = stats.mannwhitneyu(controlALSPAC['Age'], PEs_ALSPAC['Age'], alternative='two-sided')
 print("Mann-Whiteney U test for Age:")
-print(f"Mann-Whiteney U: {t_stat}, P-value: {p_value_age:.2e}")
+print(f"Mann-Whiteney U: {t_stat:.3}, P-value: {p_value_age:.2e}")
 if p_value_age < 0.05:
     print("Significant differences in age distributions between the groups.")
 else:
     print("No significant differences in age distributions between the groups.")
 
 # Check for Sex Comparability (Categorical Data) using a Chi-Square test
-control_sex_counts = controlALSPAC['sexo(M=1;F=0)'].value_counts()
-PEs_sex_counts = PEs_ALSPAC['sexo(M=1;F=0)'].value_counts()
+control_sex_counts = controlALSPAC['sex'].value_counts()
+PEs_sex_counts = PEs_ALSPAC['sex'].value_counts()
 
 # Create a DataFrame to represent the contingency table
 contingency_table = pd.DataFrame({'Control': control_sex_counts, 'PEs': PEs_sex_counts})
@@ -184,7 +162,7 @@ print("Checking Normality of BrainPAD Distribution:")
 for group, name in [(controlALSPAC, "Controls"), (PEs_ALSPAC, "PEs")]:
     # Use Shapiro-Wilk test instead of KS test
     stat, p_value = stats.shapiro(group['brainPAD_standardized'])
-    print(f"{name} Group - Shapiro-Wilk Test: Stat={round(stat, 3)}, P-value={p_value:.2e}")
+    print(f"{name} Group - Shapiro-Wilk Test: Stat={stat:.3}, P-value={p_value:.2e}")
     if p_value < 0.05:
         print(f"The BrainPAD distribution for the {name} group does not appear to be normal.\n")
     else:
@@ -193,16 +171,15 @@ for group, name in [(controlALSPAC, "Controls"), (PEs_ALSPAC, "PEs")]:
 
 # Check Equality of Variances using Levene's test
 stat, p_value_lev = stats.levene(controlALSPAC['brainPAD_standardized'], PEs_ALSPAC['brainPAD_standardized'])
-print(f"levene’s Test for Equality of Variances: Stat={round(stat, 3)}, P-value={p_value_lev:.2e}")
+print(f"levene’s Test for Equality of Variances: Stat={stat:.3}, P-value={p_value_lev:.2e}")
 if p_value_lev < 0.05:
     print("Variances of the BrainPAD distributions between the groups are significantly different.\n")
 else:
     print("No significant difference in variances of the BrainPAD distributions between the groups.\n")
 
-
+PEs_ALSPAC['Group'] = 'PE_1-3'
 merged_df = pd.concat([controlALSPAC, PEs_ALSPAC], axis=0)
-df = merged_df[['ID', 'BrainPAD', 'brainPAD_standardized', 'Edad', 'sexo(M=1;F=0)', 'Group', 'pliks18TH', 'eTIV']]
-df.columns = ['ID', 'BrainPAD', 'brainPAD_standardized', 'Edad', 'sexo', 'Group', 'pliks18TH', 'eTIV']
+df = merged_df[['ID', 'BrainPAD', 'brainPAD_standardized', 'Age', 'sex', 'Group', 'pliks18TH', 'eTIV']]
 
 merged_df.to_csv('ALSPAC_I_merged.csv', index=False)
 
@@ -216,10 +193,10 @@ print('===== Permutation test =====')
 
 # Merge the DataFrames on 'ID'
 n_permutations = 5000
-formula = 'brainPAD_standardized ~ Group + n_euler + Edad'
+formula = 'brainPAD_standardized ~ Group + n_euler + Age'
 
 # Coefficients of interest
-covariates = ['Group[T.PE_1-3]', 'n_euler', 'Edad']
+covariates = ['Group[T.PE_1-3]', 'n_euler', 'Age']
 
 # Step 1: Fit GLM on the original data to get observed coefficients
 observed_coefs = fit_glm_and_get_all_coef(merged_df, formula)
@@ -268,20 +245,20 @@ print('--- check Age ---')
 # Shapiro-Wilk Test for Normality within each group
 print("Shapiro-Wilk Test Results for Normality (Age): ")
 for group in sorted(merged_df['pliks18TH'].unique()):
-    sample = merged_df[merged_df['pliks18TH'] == group]['Edad']
+    sample = merged_df[merged_df['pliks18TH'] == group]['Age']
     # Apply the Shapiro-Wilk test for normality
     stat, p_value = stats.shapiro(sample)
     print(f"Group {group}: Shapiro-Wilk Statistic={stat:.3}, p-value={p_value:.2e}")
 
 # Levene's Test for Homogeneity of Variances
-w, p_value = stats.levene(*[merged_df[merged_df['pliks18TH'] == group]['Edad'] for group in sorted(merged_df['pliks18TH'].unique())])
+w, p_value = stats.levene(*[merged_df[merged_df['pliks18TH'] == group]['Age'] for group in sorted(merged_df['pliks18TH'].unique())])
 print(f"\nLevene's Test (Age): W-statistic={w:.3}, p-value={p_value:.2e}")
 
 # Extract unique groups
 groups = merged_df['pliks18TH'].unique()
 
 # Prepare age data for each group
-age_data = [merged_df[merged_df['pliks18TH'] == group]['Edad'].values for group in groups]
+age_data = [merged_df[merged_df['pliks18TH'] == group]['Age'].values for group in groups]
 
 # Perform Kruskal-Wallis H Test
 statistic, p_value = kruskal(*age_data)
@@ -302,10 +279,10 @@ print('===== Permutation test =====')
 
 # Merge the DataFrames on 'ID'
 n_permutations = 5000
-formula = 'brainPAD_standardized ~ pliks18TH + n_euler + Edad'
+formula = 'brainPAD_standardized ~ pliks18TH + n_euler + Age'
 
 # Coefficients of interest
-covariates = ['pliks18TH', 'n_euler', 'Edad']
+covariates = ['pliks18TH', 'n_euler', 'Age']
 
 # Step 1: Fit GLM on the original data to get observed coefficients
 observed_coefs = fit_glm_and_get_all_coef(merged_df, formula)

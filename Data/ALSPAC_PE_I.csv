@@ -1,246 +1,246 @@
-ID,DataBase,Edad,sexo,pliks18TH,pliks20TH,Patologia,Escaner,Bo
-10008A_brain,subjects_ALSPAC,21,1,1,0,BD Libre,CARDIFF_FSPGR,3.0T
-10057A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-10088A_brain,subjects_ALSPAC,20,0,1,0,BD Libre,CARDIFF_FSPGR,3.0T
-10216A_brain,subjects_ALSPAC,21,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-10221A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-10278A_brain,subjects_ALSPAC,19,0,3,0,BD Libre,CARDIFF_FSPGR,3.0T
-10330A_brain,subjects_ALSPAC,20,1,3,0,BD Libre,CARDIFF_FSPGR,3.0T
-10447A_brain,subjects_ALSPAC,21,0,1,3,BD Libre,CARDIFF_FSPGR,3.0T
-10514A_brain,subjects_ALSPAC,20,1,1,2,BD Libre,CARDIFF_FSPGR,3.0T
-10530A_brain,subjects_ALSPAC,21,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-10574A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-1058A_brain,subjects_ALSPAC,21,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-1062A_brain,subjects_ALSPAC,20,1,0,2,BD Libre,CARDIFF_FSPGR,3.0T
-10749A_brain,subjects_ALSPAC,19,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-10817A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-10874A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-11210A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-1125A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-11262A_brain,subjects_ALSPAC,19,0,3,3,BD Libre,CARDIFF_FSPGR,3.0T
-11310A_brain,subjects_ALSPAC,21,0,1,0,BD Libre,CARDIFF_FSPGR,3.0T
-11335A_brain,subjects_ALSPAC,21,0,1,1,BD Libre,CARDIFF_FSPGR,3.0T
-11483A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-11491A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-11493A_brain,subjects_ALSPAC,20,0,3,0,BD Libre,CARDIFF_FSPGR,3.0T
-11515A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-11800A_brain,subjects_ALSPAC,20,1,1,0,BD Libre,CARDIFF_FSPGR,3.0T
-11849A_brain,subjects_ALSPAC,21,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-11985A_brain,subjects_ALSPAC,21,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-12313A_brain,subjects_ALSPAC,21,1,3,1,BD Libre,CARDIFF_FSPGR,3.0T
-12367A_brain,subjects_ALSPAC,19,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-12394A_brain,subjects_ALSPAC,20,1,1,0,BD Libre,CARDIFF_FSPGR,3.0T
-12402A_brain,subjects_ALSPAC,20,1,2,2,BD Libre,CARDIFF_FSPGR,3.0T
-12421A_brain,subjects_ALSPAC,21,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-1249A_brain,subjects_ALSPAC,19,1,2,0,BD Libre,CARDIFF_FSPGR,3.0T
-12548A_brain,subjects_ALSPAC,20,0,2,0,BD Libre,CARDIFF_FSPGR,3.0T
-12557A_brain,subjects_ALSPAC,20,0,1,3,BD Libre,CARDIFF_FSPGR,3.0T
-12567A_brain,subjects_ALSPAC,19,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-12604A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-1270A_brain,subjects_ALSPAC,19,0,2,0,BD Libre,CARDIFF_FSPGR,3.0T
-12780A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-12793A_brain,subjects_ALSPAC,21,0,1,2,BD Libre,CARDIFF_FSPGR,3.0T
-12814A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-12821A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-12880A_brain,subjects_ALSPAC,21,0,2,0,BD Libre,CARDIFF_FSPGR,3.0T
-12888A_brain,subjects_ALSPAC,20,0,1,0,BD Libre,CARDIFF_FSPGR,3.0T
-12896A_brain,subjects_ALSPAC,19,1,2,0,BD Libre,CARDIFF_FSPGR,3.0T
-12989A_brain,subjects_ALSPAC,21,1,3,0,BD Libre,CARDIFF_FSPGR,3.0T
-13022A_brain,subjects_ALSPAC,19,0,2,0,BD Libre,CARDIFF_FSPGR,3.0T
-13098A_brain,subjects_ALSPAC,21,1,1,0,BD Libre,CARDIFF_FSPGR,3.0T
-13194A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-13370A_brain,subjects_ALSPAC,19,0,3,0,BD Libre,CARDIFF_FSPGR,3.0T
-13387A_brain,subjects_ALSPAC,20,0,1,0,BD Libre,CARDIFF_FSPGR,3.0T
-13419A_brain,subjects_ALSPAC,20,0,2,2,BD Libre,CARDIFF_FSPGR,3.0T
-13515A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-1366A_brain,subjects_ALSPAC,21,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-13672A_brain,subjects_ALSPAC,20,1,1,2,BD Libre,CARDIFF_FSPGR,3.0T
-13726A_brain,subjects_ALSPAC,21,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-13790A_brain,subjects_ALSPAC,19,0,2,2,BD Libre,CARDIFF_FSPGR,3.0T
-13920A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-13921A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-13927A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-13968A_brain,subjects_ALSPAC,21,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-14017A_brain,subjects_ALSPAC,20,0,2,2,BD Libre,CARDIFF_FSPGR,3.0T
-14095A_brain,subjects_ALSPAC,19,1,3,3,BD Libre,CARDIFF_FSPGR,3.0T
-14194A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-14220B_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-1424A_brain,subjects_ALSPAC,21,1,0,2,BD Libre,CARDIFF_FSPGR,3.0T
-1427A_brain,subjects_ALSPAC,19,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-14283A_brain,subjects_ALSPAC,20,0,2,0,BD Libre,CARDIFF_FSPGR,3.0T
-14295A_brain,subjects_ALSPAC,19,0,3,0,BD Libre,CARDIFF_FSPGR,3.0T
-1453A_brain,subjects_ALSPAC,20,0,1,0,BD Libre,CARDIFF_FSPGR,3.0T
-14585A_brain,subjects_ALSPAC,21,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-1461A_brain,subjects_ALSPAC,20,0,0,2,BD Libre,CARDIFF_FSPGR,3.0T
-14668A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-14707A_brain,subjects_ALSPAC,20,0,3,3,BD Libre,CARDIFF_FSPGR,3.0T
-14729A_brain,subjects_ALSPAC,20,0,3,3,BD Libre,CARDIFF_FSPGR,3.0T
-14745A_brain,subjects_ALSPAC,20,0,2,3,BD Libre,CARDIFF_FSPGR,3.0T
-14909A_brain,subjects_ALSPAC,20,1,1,2,BD Libre,CARDIFF_FSPGR,3.0T
-14954A_brain,subjects_ALSPAC,20,0,0,2,BD Libre,CARDIFF_FSPGR,3.0T
-15027A_brain,subjects_ALSPAC,20,1,2,3,BD Libre,CARDIFF_FSPGR,3.0T
-15080A_brain,subjects_ALSPAC,21,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-15124A_brain,subjects_ALSPAC,20,0,2,1,BD Libre,CARDIFF_FSPGR,3.0T
-15245A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-15460A_brain,subjects_ALSPAC,21,1,0,1,BD Libre,CARDIFF_FSPGR,3.0T
-15646A_brain,subjects_ALSPAC,19,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-15798A_brain,subjects_ALSPAC,20,0,0,1,BD Libre,CARDIFF_FSPGR,3.0T
-15867A_brain,subjects_ALSPAC,21,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-16211A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-16232A_brain,subjects_ALSPAC,21,0,1,1,BD Libre,CARDIFF_FSPGR,3.0T
-16273A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-16333A_brain,subjects_ALSPAC,20,1,3,3,BD Libre,CARDIFF_FSPGR,3.0T
-16340A_brain,subjects_ALSPAC,20,0,3,3,BD Libre,CARDIFF_FSPGR,3.0T
-16340B_brain,subjects_ALSPAC,20,0,2,0,BD Libre,CARDIFF_FSPGR,3.0T
-16358A_brain,subjects_ALSPAC,20,0,3,2,BD Libre,CARDIFF_FSPGR,3.0T
-16406A_brain,subjects_ALSPAC,21,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-16411A_brain,subjects_ALSPAC,19,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-16417A_brain,subjects_ALSPAC,21,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-16423A_brain,subjects_ALSPAC,20,0,2,1,BD Libre,CARDIFF_FSPGR,3.0T
-16459A_brain,subjects_ALSPAC,20,1,1,0,BD Libre,CARDIFF_FSPGR,3.0T
-16486A_brain,subjects_ALSPAC,20,1,3,3,BD Libre,CARDIFF_FSPGR,3.0T
-16796A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-1687A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-16893A_brain,subjects_ALSPAC,20,0,3,0,BD Libre,CARDIFF_FSPGR,3.0T
-16949A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-16973B_brain,subjects_ALSPAC,21,1,1,2,BD Libre,CARDIFF_FSPGR,3.0T
-1708A_brain,subjects_ALSPAC,21,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-17096A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-17141A_brain,subjects_ALSPAC,20,0,1,3,BD Libre,CARDIFF_FSPGR,3.0T
-17169A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-17192A_brain,subjects_ALSPAC,20,0,2,2,BD Libre,CARDIFF_FSPGR,3.0T
-17199A_brain,subjects_ALSPAC,20,0,2,0,BD Libre,CARDIFF_FSPGR,3.0T
-17240A_brain,subjects_ALSPAC,21,0,1,1,BD Libre,CARDIFF_FSPGR,3.0T
-17280A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-17419A_brain,subjects_ALSPAC,19,1,2,2,BD Libre,CARDIFF_FSPGR,3.0T
-1759A_brain,subjects_ALSPAC,21,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-1760A_brain,subjects_ALSPAC,20,1,3,3,BD Libre,CARDIFF_FSPGR,3.0T
-17672A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-17757A_brain,subjects_ALSPAC,19,0,3,3,BD Libre,CARDIFF_FSPGR,3.0T
-17778A_brain,subjects_ALSPAC,21,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-18059A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-18069A_brain,subjects_ALSPAC,20,0,2,1,BD Libre,CARDIFF_FSPGR,3.0T
-18205A_brain,subjects_ALSPAC,20,0,1,0,BD Libre,CARDIFF_FSPGR,3.0T
-18314A_brain,subjects_ALSPAC,20,1,2,2,BD Libre,CARDIFF_FSPGR,3.0T
-18452A_brain,subjects_ALSPAC,20,1,1,2,BD Libre,CARDIFF_FSPGR,3.0T
-18537A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-18619A_brain,subjects_ALSPAC,19,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-18871A_brain,subjects_ALSPAC,20,1,2,1,BD Libre,CARDIFF_FSPGR,3.0T
-18944A_brain,subjects_ALSPAC,19,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-19047A_brain,subjects_ALSPAC,20,0,1,0,BD Libre,CARDIFF_FSPGR,3.0T
-19101A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-19120A_brain,subjects_ALSPAC,21,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-19256A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-19261A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-19577A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-19582A_brain,subjects_ALSPAC,20,0,3,0,BD Libre,CARDIFF_FSPGR,3.0T
-1969A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-19760A_brain,subjects_ALSPAC,20,0,2,2,BD Libre,CARDIFF_FSPGR,3.0T
-19835A_brain,subjects_ALSPAC,20,1,2,3,BD Libre,CARDIFF_FSPGR,3.0T
-19843A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-19849A_brain,subjects_ALSPAC,21,0,3,0,BD Libre,CARDIFF_FSPGR,3.0T
-20051A_brain,subjects_ALSPAC,20,1,1,2,BD Libre,CARDIFF_FSPGR,3.0T
-2020A_brain,subjects_ALSPAC,20,1,2,2,BD Libre,CARDIFF_FSPGR,3.0T
-20222A_brain,subjects_ALSPAC,20,0,3,0,BD Libre,CARDIFF_FSPGR,3.0T
-20277A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-20327A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-20333A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-20540A_brain,subjects_ALSPAC,21,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-20643A_brain,subjects_ALSPAC,20,0,2,0,BD Libre,CARDIFF_FSPGR,3.0T
-20652A_brain,subjects_ALSPAC,21,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-20751A_brain,subjects_ALSPAC,20,0,3,2,BD Libre,CARDIFF_FSPGR,3.0T
-207A_brain,subjects_ALSPAC,21,0,3,3,BD Libre,CARDIFF_FSPGR,3.0T
-21000A_brain,subjects_ALSPAC,20,0,3,2,BD Libre,CARDIFF_FSPGR,3.0T
-21018A_brain,subjects_ALSPAC,20,1,2,2,BD Libre,CARDIFF_FSPGR,3.0T
-21062A_brain,subjects_ALSPAC,21,0,1,1,BD Libre,CARDIFF_FSPGR,3.0T
-21080A_brain,subjects_ALSPAC,19,0,3,3,BD Libre,CARDIFF_FSPGR,3.0T
-21097A_brain,subjects_ALSPAC,20,1,2,2,BD Libre,CARDIFF_FSPGR,3.0T
-21099A_brain,subjects_ALSPAC,19,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-21136A_brain,subjects_ALSPAC,20,0,2,0,BD Libre,CARDIFF_FSPGR,3.0T
-21174A_brain,subjects_ALSPAC,20,1,2,0,BD Libre,CARDIFF_FSPGR,3.0T
-21268A_brain,subjects_ALSPAC,20,0,2,0,BD Libre,CARDIFF_FSPGR,3.0T
-2179A_brain,subjects_ALSPAC,20,0,2,0,BD Libre,CARDIFF_FSPGR,3.0T
-232A_brain,subjects_ALSPAC,19,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-2358A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-249A_brain,subjects_ALSPAC,20,0,2,2,BD Libre,CARDIFF_FSPGR,3.0T
-2500A_brain,subjects_ALSPAC,21,0,1,0,BD Libre,CARDIFF_FSPGR,3.0T
-2573A_brain,subjects_ALSPAC,21,0,3,1,BD Libre,CARDIFF_FSPGR,3.0T
-2788A_brain,subjects_ALSPAC,20,0,1,2,BD Libre,CARDIFF_FSPGR,3.0T
-2932A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-3005A_brain,subjects_ALSPAC,19,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-3073A_brain,subjects_ALSPAC,20,0,2,0,BD Libre,CARDIFF_FSPGR,3.0T
-3137A_brain,subjects_ALSPAC,21,0,1,0,BD Libre,CARDIFF_FSPGR,3.0T
-3191A_brain,subjects_ALSPAC,21,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-3469A_brain,subjects_ALSPAC,21,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-3717A_brain,subjects_ALSPAC,19,1,2,3,BD Libre,CARDIFF_FSPGR,3.0T
-3921A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-3943A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-4089A_brain,subjects_ALSPAC,20,0,3,2,BD Libre,CARDIFF_FSPGR,3.0T
-4103A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-4282A_brain,subjects_ALSPAC,21,1,1,1,BD Libre,CARDIFF_FSPGR,3.0T
-4345A_brain,subjects_ALSPAC,20,0,1,2,BD Libre,CARDIFF_FSPGR,3.0T
-4422A_brain,subjects_ALSPAC,20,0,2,1,BD Libre,CARDIFF_FSPGR,3.0T
-4509A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-4516A_brain,subjects_ALSPAC,20,0,1,2,BD Libre,CARDIFF_FSPGR,3.0T
-4587A_brain,subjects_ALSPAC,21,1,2,0,BD Libre,CARDIFF_FSPGR,3.0T
-4760A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-4983A_brain,subjects_ALSPAC,20,1,3,1,BD Libre,CARDIFF_FSPGR,3.0T
-5031A_brain,subjects_ALSPAC,21,0,1,0,BD Libre,CARDIFF_FSPGR,3.0T
-5112A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-5486A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-5529A_brain,subjects_ALSPAC,21,0,1,2,BD Libre,CARDIFF_FSPGR,3.0T
-5656A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-5699A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-5717A_brain,subjects_ALSPAC,20,0,3,0,BD Libre,CARDIFF_FSPGR,3.0T
-5761A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-5769A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-5778A_brain,subjects_ALSPAC,20,0,2,0,BD Libre,CARDIFF_FSPGR,3.0T
-6081A_brain,subjects_ALSPAC,19,0,2,0,BD Libre,CARDIFF_FSPGR,3.0T
-6108A_brain,subjects_ALSPAC,21,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-6160A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-6228A_brain,subjects_ALSPAC,19,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-6395A_brain,subjects_ALSPAC,21,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-6398A_brain,subjects_ALSPAC,19,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-6497A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-6545A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-6604A_brain,subjects_ALSPAC,20,0,3,0,BD Libre,CARDIFF_FSPGR,3.0T
-676A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-6878A_brain,subjects_ALSPAC,20,1,2,0,BD Libre,CARDIFF_FSPGR,3.0T
-6917A_brain,subjects_ALSPAC,20,0,3,0,BD Libre,CARDIFF_FSPGR,3.0T
-712A_brain,subjects_ALSPAC,21,1,1,1,BD Libre,CARDIFF_FSPGR,3.0T
-7301A_brain,subjects_ALSPAC,21,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-7310A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-731A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-7396A_brain,subjects_ALSPAC,19,0,2,0,BD Libre,CARDIFF_FSPGR,3.0T
-7467A_brain,subjects_ALSPAC,20,0,2,0,BD Libre,CARDIFF_FSPGR,3.0T
-7507A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-7568A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-762A_brain,subjects_ALSPAC,20,0,2,2,BD Libre,CARDIFF_FSPGR,3.0T
-7669A_brain,subjects_ALSPAC,20,0,3,2,BD Libre,CARDIFF_FSPGR,3.0T
-7681A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-7708A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-7824A_brain,subjects_ALSPAC,21,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-7825A_brain,subjects_ALSPAC,20,1,1,1,BD Libre,CARDIFF_FSPGR,3.0T
-7842A_brain,subjects_ALSPAC,20,0,1,2,BD Libre,CARDIFF_FSPGR,3.0T
-7939A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-79A_brain,subjects_ALSPAC,21,0,1,3,BD Libre,CARDIFF_FSPGR,3.0T
-8010A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-8092A_brain,subjects_ALSPAC,21,0,1,0,BD Libre,CARDIFF_FSPGR,3.0T
-8337A_brain,subjects_ALSPAC,22,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-833A_brain,subjects_ALSPAC,22,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-8421A_brain,subjects_ALSPAC,21,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-8511A_brain,subjects_ALSPAC,21,0,1,0,BD Libre,CARDIFF_FSPGR,3.0T
-8536A_brain,subjects_ALSPAC,20,0,2,2,BD Libre,CARDIFF_FSPGR,3.0T
-8630A_brain,subjects_ALSPAC,21,0,1,0,BD Libre,CARDIFF_FSPGR,3.0T
-8705A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-8887A_brain,subjects_ALSPAC,21,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-8913A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-906A_brain,subjects_ALSPAC,20,0,3,2,BD Libre,CARDIFF_FSPGR,3.0T
-9252A_brain,subjects_ALSPAC,20,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-9384A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-943A_brain,subjects_ALSPAC,21,1,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-9467A_brain,subjects_ALSPAC,20,0,0,0,BD Libre,CARDIFF_FSPGR,3.0T
-9537A_brain,subjects_ALSPAC,20,0,0,1,BD Libre,CARDIFF_FSPGR,3.0T
-9597A_brain,subjects_ALSPAC,20,1,2,1,BD Libre,CARDIFF_FSPGR,3.0T
-9677A_brain,subjects_ALSPAC,20,0,3,3,BD Libre,CARDIFF_FSPGR,3.0T
-9965A_brain,subjects_ALSPAC,21,0,3,2,BD Libre,CARDIFF_FSPGR,3.0T
+ID,DataBase,Age,sex,pliks18TH,pliks20TH,Bo
+10008A_brain,subjects_ALSPAC,21,1,1,0,3.0T
+10057A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+10088A_brain,subjects_ALSPAC,20,0,1,0,3.0T
+10216A_brain,subjects_ALSPAC,21,0,0,0,3.0T
+10221A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+10278A_brain,subjects_ALSPAC,19,0,3,0,3.0T
+10330A_brain,subjects_ALSPAC,20,1,3,0,3.0T
+10447A_brain,subjects_ALSPAC,21,0,1,3,3.0T
+10514A_brain,subjects_ALSPAC,20,1,1,2,3.0T
+10530A_brain,subjects_ALSPAC,21,0,0,0,3.0T
+10574A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+1058A_brain,subjects_ALSPAC,21,0,0,0,3.0T
+1062A_brain,subjects_ALSPAC,20,1,0,2,3.0T
+10749A_brain,subjects_ALSPAC,19,0,0,0,3.0T
+10817A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+10874A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+11210A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+1125A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+11262A_brain,subjects_ALSPAC,19,0,3,3,3.0T
+11310A_brain,subjects_ALSPAC,21,0,1,0,3.0T
+11335A_brain,subjects_ALSPAC,21,0,1,1,3.0T
+11483A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+11491A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+11493A_brain,subjects_ALSPAC,20,0,3,0,3.0T
+11515A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+11800A_brain,subjects_ALSPAC,20,1,1,0,3.0T
+11849A_brain,subjects_ALSPAC,21,1,0,0,3.0T
+11985A_brain,subjects_ALSPAC,21,0,0,0,3.0T
+12313A_brain,subjects_ALSPAC,21,1,3,1,3.0T
+12367A_brain,subjects_ALSPAC,19,0,0,0,3.0T
+12394A_brain,subjects_ALSPAC,20,1,1,0,3.0T
+12402A_brain,subjects_ALSPAC,20,1,2,2,3.0T
+12421A_brain,subjects_ALSPAC,21,0,0,0,3.0T
+1249A_brain,subjects_ALSPAC,19,1,2,0,3.0T
+12548A_brain,subjects_ALSPAC,20,0,2,0,3.0T
+12557A_brain,subjects_ALSPAC,20,0,1,3,3.0T
+12567A_brain,subjects_ALSPAC,19,0,0,0,3.0T
+12604A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+1270A_brain,subjects_ALSPAC,19,0,2,0,3.0T
+12780A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+12793A_brain,subjects_ALSPAC,21,0,1,2,3.0T
+12814A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+12821A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+12880A_brain,subjects_ALSPAC,21,0,2,0,3.0T
+12888A_brain,subjects_ALSPAC,20,0,1,0,3.0T
+12896A_brain,subjects_ALSPAC,19,1,2,0,3.0T
+12989A_brain,subjects_ALSPAC,21,1,3,0,3.0T
+13022A_brain,subjects_ALSPAC,19,0,2,0,3.0T
+13098A_brain,subjects_ALSPAC,21,1,1,0,3.0T
+13194A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+13370A_brain,subjects_ALSPAC,19,0,3,0,3.0T
+13387A_brain,subjects_ALSPAC,20,0,1,0,3.0T
+13419A_brain,subjects_ALSPAC,20,0,2,2,3.0T
+13515A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+1366A_brain,subjects_ALSPAC,21,0,0,0,3.0T
+13672A_brain,subjects_ALSPAC,20,1,1,2,3.0T
+13726A_brain,subjects_ALSPAC,21,1,0,0,3.0T
+13790A_brain,subjects_ALSPAC,19,0,2,2,3.0T
+13920A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+13921A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+13927A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+13968A_brain,subjects_ALSPAC,21,1,0,0,3.0T
+14017A_brain,subjects_ALSPAC,20,0,2,2,3.0T
+14095A_brain,subjects_ALSPAC,19,1,3,3,3.0T
+14194A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+14220B_brain,subjects_ALSPAC,20,1,0,0,3.0T
+1424A_brain,subjects_ALSPAC,21,1,0,2,3.0T
+1427A_brain,subjects_ALSPAC,19,1,0,0,3.0T
+14283A_brain,subjects_ALSPAC,20,0,2,0,3.0T
+14295A_brain,subjects_ALSPAC,19,0,3,0,3.0T
+1453A_brain,subjects_ALSPAC,20,0,1,0,3.0T
+14585A_brain,subjects_ALSPAC,21,1,0,0,3.0T
+1461A_brain,subjects_ALSPAC,20,0,0,2,3.0T
+14668A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+14707A_brain,subjects_ALSPAC,20,0,3,3,3.0T
+14729A_brain,subjects_ALSPAC,20,0,3,3,3.0T
+14745A_brain,subjects_ALSPAC,20,0,2,3,3.0T
+14909A_brain,subjects_ALSPAC,20,1,1,2,3.0T
+14954A_brain,subjects_ALSPAC,20,0,0,2,3.0T
+15027A_brain,subjects_ALSPAC,20,1,2,3,3.0T
+15080A_brain,subjects_ALSPAC,21,1,0,0,3.0T
+15124A_brain,subjects_ALSPAC,20,0,2,1,3.0T
+15245A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+15460A_brain,subjects_ALSPAC,21,1,0,1,3.0T
+15646A_brain,subjects_ALSPAC,19,1,0,0,3.0T
+15798A_brain,subjects_ALSPAC,20,0,0,1,3.0T
+15867A_brain,subjects_ALSPAC,21,1,0,0,3.0T
+16211A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+16232A_brain,subjects_ALSPAC,21,0,1,1,3.0T
+16273A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+16333A_brain,subjects_ALSPAC,20,1,3,3,3.0T
+16340A_brain,subjects_ALSPAC,20,0,3,3,3.0T
+16340B_brain,subjects_ALSPAC,20,0,2,0,3.0T
+16358A_brain,subjects_ALSPAC,20,0,3,2,3.0T
+16406A_brain,subjects_ALSPAC,21,1,0,0,3.0T
+16411A_brain,subjects_ALSPAC,19,0,0,0,3.0T
+16417A_brain,subjects_ALSPAC,21,0,0,0,3.0T
+16423A_brain,subjects_ALSPAC,20,0,2,1,3.0T
+16459A_brain,subjects_ALSPAC,20,1,1,0,3.0T
+16486A_brain,subjects_ALSPAC,20,1,3,3,3.0T
+16796A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+1687A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+16893A_brain,subjects_ALSPAC,20,0,3,0,3.0T
+16949A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+16973B_brain,subjects_ALSPAC,21,1,1,2,3.0T
+1708A_brain,subjects_ALSPAC,21,0,0,0,3.0T
+17096A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+17141A_brain,subjects_ALSPAC,20,0,1,3,3.0T
+17169A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+17192A_brain,subjects_ALSPAC,20,0,2,2,3.0T
+17199A_brain,subjects_ALSPAC,20,0,2,0,3.0T
+17240A_brain,subjects_ALSPAC,21,0,1,1,3.0T
+17280A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+17419A_brain,subjects_ALSPAC,19,1,2,2,3.0T
+1759A_brain,subjects_ALSPAC,21,1,0,0,3.0T
+1760A_brain,subjects_ALSPAC,20,1,3,3,3.0T
+17672A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+17757A_brain,subjects_ALSPAC,19,0,3,3,3.0T
+17778A_brain,subjects_ALSPAC,21,1,0,0,3.0T
+18059A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+18069A_brain,subjects_ALSPAC,20,0,2,1,3.0T
+18205A_brain,subjects_ALSPAC,20,0,1,0,3.0T
+18314A_brain,subjects_ALSPAC,20,1,2,2,3.0T
+18452A_brain,subjects_ALSPAC,20,1,1,2,3.0T
+18537A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+18619A_brain,subjects_ALSPAC,19,0,0,0,3.0T
+18871A_brain,subjects_ALSPAC,20,1,2,1,3.0T
+18944A_brain,subjects_ALSPAC,19,0,0,0,3.0T
+19047A_brain,subjects_ALSPAC,20,0,1,0,3.0T
+19101A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+19120A_brain,subjects_ALSPAC,21,0,0,0,3.0T
+19256A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+19261A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+19577A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+19582A_brain,subjects_ALSPAC,20,0,3,0,3.0T
+1969A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+19760A_brain,subjects_ALSPAC,20,0,2,2,3.0T
+19835A_brain,subjects_ALSPAC,20,1,2,3,3.0T
+19843A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+19849A_brain,subjects_ALSPAC,21,0,3,0,3.0T
+20051A_brain,subjects_ALSPAC,20,1,1,2,3.0T
+2020A_brain,subjects_ALSPAC,20,1,2,2,3.0T
+20222A_brain,subjects_ALSPAC,20,0,3,0,3.0T
+20277A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+20327A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+20333A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+20540A_brain,subjects_ALSPAC,21,1,0,0,3.0T
+20643A_brain,subjects_ALSPAC,20,0,2,0,3.0T
+20652A_brain,subjects_ALSPAC,21,1,0,0,3.0T
+20751A_brain,subjects_ALSPAC,20,0,3,2,3.0T
+207A_brain,subjects_ALSPAC,21,0,3,3,3.0T
+21000A_brain,subjects_ALSPAC,20,0,3,2,3.0T
+21018A_brain,subjects_ALSPAC,20,1,2,2,3.0T
+21062A_brain,subjects_ALSPAC,21,0,1,1,3.0T
+21080A_brain,subjects_ALSPAC,19,0,3,3,3.0T
+21097A_brain,subjects_ALSPAC,20,1,2,2,3.0T
+21099A_brain,subjects_ALSPAC,19,0,0,0,3.0T
+21136A_brain,subjects_ALSPAC,20,0,2,0,3.0T
+21174A_brain,subjects_ALSPAC,20,1,2,0,3.0T
+21268A_brain,subjects_ALSPAC,20,0,2,0,3.0T
+2179A_brain,subjects_ALSPAC,20,0,2,0,3.0T
+232A_brain,subjects_ALSPAC,19,0,0,0,3.0T
+2358A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+249A_brain,subjects_ALSPAC,20,0,2,2,3.0T
+2500A_brain,subjects_ALSPAC,21,0,1,0,3.0T
+2573A_brain,subjects_ALSPAC,21,0,3,1,3.0T
+2788A_brain,subjects_ALSPAC,20,0,1,2,3.0T
+2932A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+3005A_brain,subjects_ALSPAC,19,0,0,0,3.0T
+3073A_brain,subjects_ALSPAC,20,0,2,0,3.0T
+3137A_brain,subjects_ALSPAC,21,0,1,0,3.0T
+3191A_brain,subjects_ALSPAC,21,1,0,0,3.0T
+3469A_brain,subjects_ALSPAC,21,1,0,0,3.0T
+3717A_brain,subjects_ALSPAC,19,1,2,3,3.0T
+3921A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+3943A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+4089A_brain,subjects_ALSPAC,20,0,3,2,3.0T
+4103A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+4282A_brain,subjects_ALSPAC,21,1,1,1,3.0T
+4345A_brain,subjects_ALSPAC,20,0,1,2,3.0T
+4422A_brain,subjects_ALSPAC,20,0,2,1,3.0T
+4509A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+4516A_brain,subjects_ALSPAC,20,0,1,2,3.0T
+4587A_brain,subjects_ALSPAC,21,1,2,0,3.0T
+4760A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+4983A_brain,subjects_ALSPAC,20,1,3,1,3.0T
+5031A_brain,subjects_ALSPAC,21,0,1,0,3.0T
+5112A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+5486A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+5529A_brain,subjects_ALSPAC,21,0,1,2,3.0T
+5656A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+5699A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+5717A_brain,subjects_ALSPAC,20,0,3,0,3.0T
+5761A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+5769A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+5778A_brain,subjects_ALSPAC,20,0,2,0,3.0T
+6081A_brain,subjects_ALSPAC,19,0,2,0,3.0T
+6108A_brain,subjects_ALSPAC,21,0,0,0,3.0T
+6160A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+6228A_brain,subjects_ALSPAC,19,0,0,0,3.0T
+6395A_brain,subjects_ALSPAC,21,0,0,0,3.0T
+6398A_brain,subjects_ALSPAC,19,0,0,0,3.0T
+6497A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+6545A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+6604A_brain,subjects_ALSPAC,20,0,3,0,3.0T
+676A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+6878A_brain,subjects_ALSPAC,20,1,2,0,3.0T
+6917A_brain,subjects_ALSPAC,20,0,3,0,3.0T
+712A_brain,subjects_ALSPAC,21,1,1,1,3.0T
+7301A_brain,subjects_ALSPAC,21,1,0,0,3.0T
+7310A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+731A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+7396A_brain,subjects_ALSPAC,19,0,2,0,3.0T
+7467A_brain,subjects_ALSPAC,20,0,2,0,3.0T
+7507A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+7568A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+762A_brain,subjects_ALSPAC,20,0,2,2,3.0T
+7669A_brain,subjects_ALSPAC,20,0,3,2,3.0T
+7681A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+7708A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+7824A_brain,subjects_ALSPAC,21,0,0,0,3.0T
+7825A_brain,subjects_ALSPAC,20,1,1,1,3.0T
+7842A_brain,subjects_ALSPAC,20,0,1,2,3.0T
+7939A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+79A_brain,subjects_ALSPAC,21,0,1,3,3.0T
+8010A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+8092A_brain,subjects_ALSPAC,21,0,1,0,3.0T
+8337A_brain,subjects_ALSPAC,22,1,0,0,3.0T
+833A_brain,subjects_ALSPAC,22,1,0,0,3.0T
+8421A_brain,subjects_ALSPAC,21,0,0,0,3.0T
+8511A_brain,subjects_ALSPAC,21,0,1,0,3.0T
+8536A_brain,subjects_ALSPAC,20,0,2,2,3.0T
+8630A_brain,subjects_ALSPAC,21,0,1,0,3.0T
+8705A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+8887A_brain,subjects_ALSPAC,21,1,0,0,3.0T
+8913A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+906A_brain,subjects_ALSPAC,20,0,3,2,3.0T
+9252A_brain,subjects_ALSPAC,20,1,0,0,3.0T
+9384A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+943A_brain,subjects_ALSPAC,21,1,0,0,3.0T
+9467A_brain,subjects_ALSPAC,20,0,0,0,3.0T
+9537A_brain,subjects_ALSPAC,20,0,0,1,3.0T
+9597A_brain,subjects_ALSPAC,20,1,2,1,3.0T
+9677A_brain,subjects_ALSPAC,20,0,3,3,3.0T
+9965A_brain,subjects_ALSPAC,21,0,3,2,3.0T
