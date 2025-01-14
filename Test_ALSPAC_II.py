@@ -7,221 +7,16 @@ from utils_Train import *
 import pickle
 import ast
 
-from itertools import islice
-from sklearn.utils import shuffle
-
 from sklearn.metrics import mean_absolute_error, r2_score
 from sklearn.linear_model import LinearRegression
 from scipy.stats import pearsonr
 from scipy.stats import kruskal
 from scipy.stats import f
 
-from utils_Harmonization import *
-
 import statsmodels.formula.api as smf
 from statsmodels.stats.diagnostic import het_breuschpagan
 from statsmodels.formula.api import ols
 from statsmodels.formula.api import wls
-from statsmodels.stats.multicomp import MultiComparison
-import pingouin as pg
-
-def calculate_cohen_d(group1, group2):
-    mean1, mean2 = np.mean(group1), np.mean(group2)
-    std1, std2 = np.std(group1, ddof=1), np.std(group2, ddof=1)
-    n1, n2 = len(group1), len(group2)
-    pooled_std = np.sqrt(((n1 - 1) * std1**2 + (n2 - 1) * std2**2) / (n1 + n2 - 2))
-    return (mean2 - mean1) / pooled_std
-
-def remove_outliers(df, column):
-    Q1 = df[column].quantile(0.25)
-    Q3 = df[column].quantile(0.75)
-    IQR = Q3 - Q1
-    lower_bound = Q1 - 1.5 * IQR
-    upper_bound = Q3 + 1.5 * IQR
-    return df[(df[column] >= lower_bound) & (df[column] <= upper_bound)]
-
-def figura_edad_y_edad_predicha(edades_test, pred_test):
-
-    # calculo MAE, MAPE y r test
-    MAE_biased_test = mean_absolute_error(edades_test, pred_test)
-    r_squared = r2_score(edades_test, pred_test)
-    r_biased_test = stats.pearsonr(edades_test, pred_test)[0]
-
-    # Figura concordancia entre predichas y reales con reg lineal
-    plt.figure(figsize=(8, 8))
-    plt.scatter(edades_test, pred_test, color='blue', label='Predictions')
-    plt.plot([10, 100], [10, 100], 'k--', lw=2, label='Ideal Fit')
-    plt.xlabel('Real Age')
-    plt.ylabel('Predicted Age')
-    plt.title('Predicted Age vs. Real Age')
-
-    # Set x and y axis limits
-    plt.xlim(5, 100)
-    plt.ylim(5, 100)
-
-    # Ensure x and y axes have the same scale
-    plt.gca().set_aspect('equal', adjustable='box')
-
-    # Annotate MAE, Pearson correlation r, and R² in the plot
-    textstr = '\n'.join((
-        f'MAE: {MAE_biased_test:.2f}',
-        f'Pearson r: {r_biased_test:.2f}',
-        f'R²: {r_squared:.2f}'))
-    plt.text(0.05, 0.95, textstr, transform=plt.gca().transAxes, fontsize=12,
-             verticalalignment='top', bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
-
-    plt.show()
-
-def model_evaluation_MCCQR_MLP(X_train, X_test, results, features):
-    etiv = X_test['eTIV'].values.tolist()
-
-    edades_train = X_train['Edad'].values
-    edades_test = results['Edad'].values
-
-    X_train = X_train[features]
-    X_test = X_test[features]
-
-    # aplico la eliminación de outliers
-    X_train, X_test = outlier_flattening(X_train, X_test)
-
-    # 3.- normalizo los datos OJO LA NORMALIZACION QUE CON Z NORM O CON 0-1 PUEDE VARIAR EL RESULTADO BASTANTE!
-    X_train, X_test = normalize_data_min_max(X_train, X_test, (-1, 1))
-
-    X_train_df = pd.DataFrame(X_train)
-    X_train_df.columns = features
-    X_test_df = pd.DataFrame(X_test)
-    X_test_df.columns = features
-    X_test_df['Edad'] = edades_test
-    X_train_df['Edad'] = edades_train
-    X_train_df.to_csv('X_train_df_norm.csv', index=False)
-    X_test_df.to_csv('X_test_df_norm.csv', index=False)
-
-    file_path = ('/home/rafa/PycharmProjects/Cardiff_ALSPAC/modelos/modelo_morfo_100_con_WAND/SimpleMLP_nfeats_100_fold_0.pkl')
-    with open(file_path, 'rb') as file:
-        regresor = pickle.load(file)
-
-    pred_test_median_all = regresor.predict(X_test, apply_calibration=True)
-    aleatory_noEpistemic_pred = pd.DataFrame(dict(islice(pred_test_median_all.items(), 4, 104)))
-    df_colsest_to_zero = ((aleatory_noEpistemic_pred.T - edades_test).T).abs()
-    closest_to_zero = df_colsest_to_zero.idxmin(axis=1)
-
-    indexes = []
-    for value in closest_to_zero:
-        indexes.append(float(value[0:5])-0.50)
-
-    plt.figure(figsize=(10, 5))
-    sns.kdeplot(indexes, shade=True)
-    plt.title('Density Plot')
-    plt.xlabel('Value')
-    plt.ylabel('Density')
-    plt.show()
-
-    pred_test_median = pred_test_median_all['median_aleatory_noEpistemic']
-
-    # bias correction
-    df_bias_correction = pd.read_csv('/home/rafa/PycharmProjects/Cardiff_ALSPAC/modelos/modelo_morfo_100_con_WAND/DataFrame_bias_correction.csv')
-
-    model = LinearRegression()
-    model.fit(df_bias_correction[['edades_train']], df_bias_correction['pred_train'])
-
-    slope = model.coef_[0]
-    intercept = model.intercept_
-
-    results['pred_Edad_c'] = (pred_test_median - intercept) / slope
-    results['pred_Edad'] = pred_test_median
-    results['BrainPAD'] = results['pred_Edad_c'] - edades_test
-    results['eTIV'] = etiv
-
-    r_antes, _ = pearsonr(results['pred_Edad'] - results['Edad'], results['Edad'])
-    print('Correlacion Edad predicha - Edad antes de la corrección: '+str(r_antes))
-
-    r_tras, _ = pearsonr(results['pred_Edad_c'] - results['Edad'], results['Edad'])
-    print('Correlacion Edad predicha - Edad tras la corrección: '+str(r_tras))
-
-    ancova_results = pg.ancova(data=results, dv='BrainPAD', between='sexo(M=1;F=0)', covar=['eTIV'])
-    print(ancova_results)
-
-    return results
-
-def model_evaluation(X_train, X_test, results, features):
-    etiv = X_test['eTIV'].values.tolist()
-
-    edades_train = X_train['Edad'].values
-    edades_test = results['Edad'].values
-
-    X_train = X_train[features]
-    X_test = X_test[features]
-
-    # aplico la eliminación de outliers
-    X_train, X_test = outlier_flattening(X_train, X_test)
-
-    # 3.- normalizo los datos OJO LA NORMALIZACION QUE CON Z NORM O CON 0-1 PUEDE VARIAR EL RESULTADO BASTANTE!
-    X_train, X_test = normalize_data_min_max(X_train, X_test, (-1, 1))
-
-    X_train_df = pd.DataFrame(X_train)
-    X_train_df.columns = features
-    X_test_df = pd.DataFrame(X_test)
-    X_test_df.columns = features
-    X_test_df['Edad'] = edades_test
-    X_train_df['Edad'] = edades_train
-    X_train_df.to_csv('X_train_df_norm.csv', index=False)
-    X_test_df.to_csv('X_test_df_norm.csv', index=False)
-
-    file_path = ('/home/rafa/PycharmProjects/Cardiff_ALSPAC/modelos/modelo_morfo_100_Cardiff_balanced_WAND/SimpleMLP_nfeats_100_fold_0.pkl')
-    with open(file_path, 'rb') as file:
-        regresor = pickle.load(file)
-
-    pred_test_median = regresor.predict(X_test)
-
-    # bias correction
-    df_bias_correction = pd.read_csv('/home/rafa/PycharmProjects/Cardiff_ALSPAC/modelos/modelo_morfo_100_Cardiff_balanced_WAND/DataFrame_bias_correction.csv')
-
-    model = LinearRegression()
-    model.fit(df_bias_correction[['edades_train']], df_bias_correction['pred_train'])
-
-    slope = model.coef_[0]
-    intercept = model.intercept_
-
-    results['pred_Edad_c'] = (pred_test_median - intercept) / slope
-    results['pred_Edad'] = pred_test_median
-    results['BrainPAD'] = results['pred_Edad_c'] - edades_test
-    results['eTIV'] = etiv
-
-    # if'pliks18TH' in results.columns:
-    # results = results.groupby('pliks18TH').apply(remove_outliers, column='BrainPAD').reset_index(drop=True)
-
-    r_antes, _ = pearsonr(results['pred_Edad'] - results['Edad'], results['Edad'])
-    print('Correlacion Edad predicha - Edad antes de la corrección: '+str(r_antes))
-
-    r_tras, _ = pearsonr(results['pred_Edad_c'] - results['Edad'], results['Edad'])
-    print('Correlacion Edad predicha - Edad tras la corrección: '+str(r_tras))
-
-    results['eTIV_std'] = (results['eTIV'] - results['eTIV'].mean()) / results['eTIV'].std()
-
-    results.rename(columns={'sexo(M=1;F=0)': 'sexo'}, inplace=True)
-    model = smf.rlm('BrainPAD ~ C(sexo) + eTIV_std', data=results).fit()
-
-    print(model.summary())
-
-    return results
-
-def benjamini_hochberg_correction(p_values):
-    n = len(p_values)
-    sorted_p_values = np.array(sorted(p_values))
-    ranks = np.arange(1, n+1)
-
-    # Calculate the cumulative minimum of the adjusted p-values in reverse
-    adjusted_p_values = np.minimum.accumulate((sorted_p_values * n) / ranks)[::-1]
-
-    # Reverse back to original order
-    reverse_indices = np.argsort(p_values)
-    return adjusted_p_values[reverse_indices]
-
-def calculate_metrics(y_true, y_pred):
-    mae = mean_absolute_error(y_true, y_pred)
-    r, _ = pearsonr(y_true, y_pred)
-    r2 = r2_score(y_true, y_pred)
-    return mae, r, r2
 
 X_train = pd.read_csv('/home/rafa/PycharmProjects/Cardiff_ALSPAC/modelos/modelo_morfo_100_Cardiff_balanced_WAND/Datos_train_sample.csv')
 x_test = pd.read_csv('/home/rafa/PycharmProjects/Cardiff_ALSPAC/modelos/modelo_morfo_100_Cardiff_balanced_WAND/Datos_Test_sample.csv')
@@ -234,7 +29,7 @@ X_test_Cardiff = pd.read_csv('/home/rafa/PycharmProjects/JoinData_FastSurfer_V2/
 ids_to_remove = ['15382A_brain', '19674A_brain', '20606A_brain', '13123A_brain', '17524A_brain']
 
 # Filter out the rows with these IDs
-# X_test_Cardiff = X_test_Cardiff[~X_test_Cardiff['ID'].isin(ids_to_remove)]
+X_test_Cardiff = X_test_Cardiff[~X_test_Cardiff['ID'].isin(ids_to_remove)]
 
 print('nº cases total: '+str(X_test_Cardiff.shape[0]))
 print('Age average: '+str(X_test_Cardiff['Edad'].mean()))
@@ -350,44 +145,6 @@ print("Cohen's D 0_3: "+str(cohen_d_0_3))
 print("Cohen's D 1_2: "+str(cohen_d_1_2))
 print("Cohen's D 1_3: "+str(cohen_d_1_3))
 print("Cohen's D 2_3: "+str(cohen_d_2_3))
-
-# Step 1: Calculate Q1 and Q3 and then IQR for 'BrainPAD'
-Q1 = healthyALSPAC['brainPAD_standardized'].quantile(0.25)
-Q3 = healthyALSPAC['brainPAD_standardized'].quantile(0.75)
-IQR = Q3 - Q1
-
-# Step 2: Define the bounds for outliers
-lower_bound = Q1 - 1.5 * IQR
-upper_bound = Q3 + 1.5 * IQR
-
-# Step 3: Filter outliers
-outliers_df_healthy = healthyALSPAC[(healthyALSPAC['brainPAD_standardized'] < lower_bound) | (healthyALSPAC['brainPAD_standardized'] > upper_bound)]
-
-# Step 4: Print the IDs of the outliers
-outlier_ids_healthy = outliers_df_healthy['ID']
-print("Outlier IDs:", outlier_ids_healthy.tolist())
-
-indexes_to_drop = healthyALSPAC[healthyALSPAC['ID'].isin(outlier_ids_healthy.tolist())].index
-# healthyALSPAC = healthyALSPAC.drop(indexes_to_drop)
-
-# Step 1: Calculate Q1 and Q3 and then IQR for 'BrainPAD'
-Q1 = crazyALSPAC['brainPAD_standardized'].quantile(0.25)
-Q3 = crazyALSPAC['brainPAD_standardized'].quantile(0.75)
-IQR = Q3 - Q1
-
-# Step 2: Define the bounds for outliers
-lower_bound = Q1 - 1.5 * IQR
-upper_bound = Q3 + 1.5 * IQR
-
-# Step 3: Filter outliers
-outliers_df_crazy = crazyALSPAC[(crazyALSPAC['brainPAD_standardized'] < lower_bound) | (crazyALSPAC['brainPAD_standardized'] > upper_bound)]
-
-# Step 4: Print the IDs of the outliers
-outlier_ids_crazy = outliers_df_crazy['ID']
-print("Outlier IDs:", outlier_ids_crazy.tolist())
-
-indexes_to_drop = crazyALSPAC[crazyALSPAC['ID'].isin(outlier_ids_crazy.tolist())].index
-# crazyALSPAC = crazyALSPAC.drop(indexes_to_drop)
 
 Results_ALSPAC = pd.concat([healthyALSPAC, crazyALSPAC], axis=0)
 
@@ -515,207 +272,64 @@ print(f"Mean Absolute Error (MAE): {mae}")
 print(f"Pearson Correlation Coefficient (r): {r}")
 print(f"Coefficient of Determination (R2): {r2}")
 
-print('\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ T-test ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n')
-
 merged_df = pd.concat([healthyALSPAC, crazyALSPAC], axis=0)
 df = merged_df[['ID', 'BrainPAD', 'brainPAD_standardized', 'Edad', 'sexo(M=1;F=0)', 'Group', 'pliks18TH', 'eTIV']]
 df.columns = ['ID', 'BrainPAD', 'brainPAD_standardized', 'Edad', 'sexo', 'Group', 'pliks18TH', 'eTIV']
 
 merged_df.to_csv('ALSPAC_II_merged_II.csv', index=False)
 
-# ttestTest
-U1, p_value = stats.ttest_ind(healthyALSPAC['brainPAD_standardized'], crazyALSPAC['brainPAD_standardized'], equal_var=True)
-print('T-test p values:'+str(p_value))
+merged_df['n_euler'] = 2
 
 print('--------------------------------')
 print('====== PairWise ANALYSIS =======')
 print('--------------------------------')
 
-# 1. Perform ANCOVA
-print("=== ANCOVA ===")
+print('===== Permutation test =====')
+
+# Merge the DataFrames on 'ID'
+n_permutations = 5000
 formula = 'brainPAD_standardized ~ Group + n_euler + Edad'
-ancova_model = ols(formula, data=merged_df).fit()
-anova_table = sm.stats.anova_lm(ancova_model, typ=2)
-print(anova_table)
 
-# Assumption Checks for ANCOVA
-print("\n--- Assumption Checks for ANCOVA ---")
-residuals = ancova_model.resid
+# Coefficients of interest
+covariates = ['Group[T.PE_1-3]', 'n_euler', 'Edad']
 
-# 1. Normality of Residuals (Shapiro-Wilk Test)
-shapiro_trend = stats.shapiro(residuals)
-print(f"Shapiro-Wilk Test: Statistics={shapiro_trend.statistic:.3f}, p-value={shapiro_trend.pvalue:.3f}")
+# Step 1: Fit GLM on the original data to get observed coefficients
+observed_coefs = fit_glm_and_get_all_coef(merged_df, formula)
 
-# Q-Q Plot
-sm.qqplot(residuals, line='45')
-plt.title('Q-Q Plot of ANCOVA Residuals')
-plt.show()
+# Step 2: Initialize a dictionary to store permutation coefficients for each covariate
+perm_coefs = {covariate: [] for covariate in covariates}
 
-# 2. Homogeneity of Regression Slopes
-formula_interaction = 'brainPAD_standardized ~ Group * n_euler + Group * Edad'
-model_interaction = ols(formula_interaction, data=merged_df).fit()
-anova_interaction = sm.stats.anova_lm(model_interaction, typ=2)
-print("\nANCOVA with Interaction Terms:")
-print(anova_interaction)
+# Create a copy of the DataFrame for permutations
+df_perm = merged_df.copy()
 
-# 3. Homogeneity of Variances (Levene's Test)
-group_data = [merged_df[merged_df['Group'] == grp]['brainPAD_standardized'] for grp in merged_df['Group'].unique()]
-levene_test = stats.levene(*group_data)
-print(f"\nLevene's Test for Homogeneity of Variances: Statistics={levene_test.statistic:.3f}, p-value={levene_test.pvalue:.3f}")
+# Step 3: Perform permutations
+for _ in range(n_permutations):
+    # Permute the dependent variable
+    df_perm['brainPAD_standardized'] = np.random.permutation(merged_df['brainPAD_standardized'])
 
-# 4. Homoscedasticity (Breusch-Pagan Test)
-bp_test = het_breuschpagan(residuals, ancova_model.model.exog)
-labels = ['LM Statistic', 'LM-Test p-value', 'F-Statistic', 'F-Test p-value']
-print("\nBreusch-Pagan Test for Homoscedasticity:")
-print(dict(zip(labels, bp_test)))
+    # Get the permuted coefficients for all covariates
+    permuted_coefs = fit_glm_and_get_all_coef(df_perm, formula)
 
-# Decision tree based on assumptions
-if shapiro_trend.pvalue > 0.6:  # Normality assumption check
-    if levene_test.pvalue > 0.05:  # Homogeneity of variances check
-        if anova_interaction['PR(>F)'][1] > 0.05 and bp_test[3] > 0.05:  # Other ANCOVA assumptions
-            print("\nAll ANCOVA assumptions are met. Proceeding with ANCOVA results.")
-            # Perform ANCOVA
-            model_ancova = ols(formula, data=merged_df).fit()
-            print(sm.stats.anova_lm(model_ancova, typ=2))
-        else:
-            print("\nANCOVA assumptions violated. Proceeding to Welch-ANCOVA due to issues with interaction terms or heteroscedasticity.")
-            # Perform Welch-ANCOVA using WLS
-            group_var = 'Group'  # Replace with your actual grouping variable name
-            dependent_var = 'brainPAD_standardized'
+    # Store the permuted coefficients for each covariate
+    for covariate in covariates:
+        perm_coefs[covariate].append(permuted_coefs[covariate])
 
-            # Calcular la varianza de brainPAD_standardized dentro de cada grupo
-            group_variances = merged_df.groupby(group_var)[dependent_var].var().reset_index()
+# Convert the permutation coefficients to numpy arrays
+perm_coefs = {covariate: np.array(coefs) for covariate, coefs in perm_coefs.items()}
 
-            # Renombrar la columna de varianza para claridad
-            group_variances.rename(columns={dependent_var: 'Variance'}, inplace=True)
+# Step 4: Calculate p-values for each covariate
+p_values = {}
+for covariate in covariates:
+    observed_coef = observed_coefs[covariate]
+    permuted_coef_distribution = perm_coefs[covariate]
 
-            # Merge group variances back to the original DataFrame
-            merged_df = merged_df.merge(group_variances, on=group_var, how='left')
+    # Calculate p-value by comparing the observed coefficient to the permuted distribution
+    p_value = np.mean(np.abs(permuted_coef_distribution) >= np.abs(observed_coef))
+    p_values[covariate] = p_value
 
-            # Add a small constant to variances to prevent division by zero
-            merged_df['Variance'] = merged_df['Variance'].replace(0, 1e-6)
-
-            # Calculate weights as the inverse of variances
-            merged_df['weights'] = 1 / merged_df['Variance']
-
-            model_wls = wls(formula, data=merged_df, weights=merged_df['weights']).fit()
-            print(model_wls.summary())
-    else:
-        print("\nHomogeneity of variances violated. Proceeding to ANCOVA robust standard errors.")
-        # Define the formula with an interaction term
-        formula = 'brainPAD_standardized ~ Group + n_euler + Edad'
-
-        # Fit the model with robust standard errors
-        model = smf.ols(formula, data=merged_df).fit(cov_type='HC3')
-
-        # Print the summary
-        print(model.summary())
-
-if shapiro_trend.pvalue < 1:
-    print("\nNormality assumption violated. Considering non-parametric alternatives.")
-    if levene_test.pvalue > 0.05:  # If variances are still equal
-        print("\nProceeding to Quade test as a non-parametric alternative.")
-        # Assuming merged_df contains your data with dependent variable 'brainPAD_standardized', groups in 'Group', and covariates 'age' and 'sex'
-        data = merged_df.copy()
-        # Step 1: Regress the dependent variable on covariates
-        covariates_model = ols('brainPAD_standardized ~ n_euler + Edad', data=data).fit()
-
-        # Print covariate results: coefficients, t-statistics, p-values
-        print("\n=== Covariates Regression Results ===")
-        print(covariates_model.summary())
-
-        # Step 2: Extract residuals and rank them
-        data['residuals'] = covariates_model.resid
-        data['rank_residuals'] = data['residuals'].rank()
-
-        # Step 3: Rank the original dependent variable
-        data['rank_brainPAD'] = data['brainPAD_standardized'].rank()
-
-        # Step 4: Calculate the "Quade scores" (difference between original rank and residual rank)
-        data['quade_scores'] = data['rank_brainPAD'] - data['rank_residuals']
-
-        # Step 5: Group by 'Group' and calculate the sum of Quade scores per group
-        grouped_scores = data.groupby('Group')['quade_scores'].sum()
-
-        # Step 6: Calculate the F-statistic for group differences on the Quade scores
-        n_groups = len(data['Group'].unique())
-        n_samples = len(data)
-
-        # Variance of the Quade scores
-        quade_score_var = np.var(data['quade_scores'], ddof=1)
-
-        # Between-group sum of squares (BSS) and within-group sum of squares (WSS)
-        bss = np.sum((grouped_scores ** 2) / data.groupby('Group').size()) - (
-                    data['quade_scores'].sum() ** 2 / n_samples)
-        wss = quade_score_var * (n_samples - n_groups)
-
-        # F-statistic
-        f_statistic = (bss / (n_groups - 1)) / (wss / (n_samples - n_groups))
-
-        # Calculate p-value using F-distribution
-        p_value = 1 - f.cdf(f_statistic, n_groups - 1, n_samples - n_groups)
-
-        # Print the Quade test results
-        print("\n=== Quade Test Results ===")
-        print(f"Quade Test F-Statistic: {f_statistic:.3f}")
-        print(f"Quade Test p-value: {p_value:.3f}")
-
-        # Decision: If p-value < 0.05, reject the null hypothesis of no difference between groups
-        if p_value < 0.05:
-            print("Significant differences between groups.")
-        else:
-            print("No significant differences between groups.")
-    else:
-        print("\nNormality and homogeneity of variances both violated. Proceeding to Permutation Test.")
-        # You can implement a permutation test here for more robust analysis
-        print('===== Permutation test =====')
-
-        # Merge the DataFrames on 'ID'
-        n_permutations = 5000
-        formula = 'brainPAD_standardized ~ Group + n_euler + Edad'
-
-        # Coefficients of interest
-        covariates = ['Group[T.PE_1-3]', 'n_euler', 'Edad']
-
-        # Step 1: Fit GLM on the original data to get observed coefficients
-        observed_coefs = fit_glm_and_get_all_coef(merged_df, formula)
-
-        # Step 2: Initialize a dictionary to store permutation coefficients for each covariate
-        perm_coefs = {covariate: [] for covariate in covariates}
-
-        # Create a copy of the DataFrame for permutations
-        df_perm = merged_df.copy()
-
-        # Step 3: Perform permutations
-        for _ in range(n_permutations):
-            # Permute the dependent variable
-            df_perm['brainPAD_standardized'] = np.random.permutation(merged_df['brainPAD_standardized'])
-
-            # Get the permuted coefficients for all covariates
-            permuted_coefs = fit_glm_and_get_all_coef(df_perm, formula)
-
-            # Store the permuted coefficients for each covariate
-            for covariate in covariates:
-                perm_coefs[covariate].append(permuted_coefs[covariate])
-
-        # Convert the permutation coefficients to numpy arrays
-        perm_coefs = {covariate: np.array(coefs) for covariate, coefs in perm_coefs.items()}
-
-        # Step 4: Calculate p-values for each covariate
-        p_values = {}
-        for covariate in covariates:
-            observed_coef = observed_coefs[covariate]
-            permuted_coef_distribution = perm_coefs[covariate]
-
-            # Calculate p-value by comparing the observed coefficient to the permuted distribution
-            p_value = np.mean(np.abs(permuted_coef_distribution) >= np.abs(observed_coef))
-            p_values[covariate] = p_value
-
-            # Print the observed coefficient and the p-value for each covariate
-            print(f"Coeficiente observado ({covariate}): {observed_coef}")
-            print(f"p-valor de la prueba de permutación ({covariate}): {p_value}")
+    # Print the observed coefficient and the p-value for each covariate
+    print(f"Coeficiente observado ({covariate}): {observed_coef}")
+    print(f"p-valor de la prueba de permutación ({covariate}): {p_value}")
 
 
 print('-----------------------------')
@@ -757,7 +371,7 @@ print(f"P-Value: {p_value:.4f}")
 data = np.array([[26, 43], [14, 15], [9, 17], [3, 11]])
 
 # Chi-square test
-chi2, p, dof, expected = chi2_contingency(data)
+chi2, p, dof, expected = stats.chi2_contingency(data)
 
 print(f"\nChi-square statistic: {chi2}")
 print(f"p-value: {p}")

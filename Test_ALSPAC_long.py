@@ -15,14 +15,13 @@ def calculate_cohen_d(group1, group2):
     pooled_std = np.sqrt(((n1 - 1) * std1**2 + (n2 - 1) * std2**2) / (n1 + n2 - 2))
     return (mean2 - mean1) / pooled_std
 
-
 # Función para ajustar el GLM y devolver todos los coefs
 def fit_glm_and_get_all_coef(data, formula):
     model = glm(formula=formula, data=data, family=sm.families.Gaussian()).fit()
     return model.params
 
-ALSPAC_I_merged = pd.read_csv('/home/rafa/PycharmProjects/Cardiff_ALSPAC/ALSPAC_I_merged.csv')
-ALSPAC_II_merged = pd.read_csv('/home/rafa/PycharmProjects/Cardiff_ALSPAC/ALSPAC_II_merged_II.csv')
+ALSPAC_I_merged = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/ALSPAC_I_merged.csv')
+ALSPAC_II_merged = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/ALSPAC_II_merged_II.csv')
 
 new_values = [value[4:] + '_brain' for value in ALSPAC_II_merged['ID']]
 ALSPAC_II_merged['ID'] = new_values
@@ -173,6 +172,8 @@ print("longi Incidente:", Control_Cardiff_Longi_Inci['DeltaBrainPAD'].mean())
 
 # Create a new column based on the old column values
 longi_todos['Grupo_ordinal'] = longi_todos['grupo_II'].map(mapping)
+
+longi_todos['n_euler'] = 2
 
 # Reshape data into long format
 timepoint_I = longi_todos[['ID', 'Edad_I', 'sexo(M=1;F=0)_I', 'brainPAD_standardized_I', 'grupo_I', 'n_euler']].copy()

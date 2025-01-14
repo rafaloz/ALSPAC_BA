@@ -21,8 +21,8 @@ def fit_glm_and_get_all_coef(data, formula):
     model = glm(formula=formula, data=data, family=sm.families.Gaussian()).fit()
     return model.params
 
-ALSPAC_I_merged = pd.read_csv('/home/rafa/PycharmProjects/Cardiff_ALSPAC/ALSPAC_I_merged.csv')
-ALSPAC_II_merged = pd.read_csv('/home/rafa/PycharmProjects/Cardiff_ALSPAC/ALSPAC_II_merged_II.csv')
+ALSPAC_I_merged = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/ALSPAC_I_merged.csv')
+ALSPAC_II_merged = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/ALSPAC_II_merged_II.csv')
 
 new_values = [value[4:] + '_brain' for value in ALSPAC_II_merged['ID']]
 ALSPAC_II_merged['ID'] = new_values
