@@ -53,6 +53,8 @@ summary_stats = Results_ALSPAC.groupby('Group').agg(
 summary_stats = summary_stats.sort_index()
 summary_stats = summary_stats.round(2)
 
+print("\n====== Summary Stats ======")
+# Rounding for cleaner output
 print(summary_stats.to_string(), '\n')
 
 # List of groups and their labels

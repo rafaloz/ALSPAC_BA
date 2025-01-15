@@ -3,8 +3,6 @@ warnings.filterwarnings("ignore")
 
 from utils import *
 
-from scipy.stats import spearmanr
-
 from scipy.stats import kruskal, chi2_contingency
 from scipy import stats
 import seaborn as sns
@@ -86,6 +84,7 @@ desired_order = ['Incident', 'Persistent', 'Remitted', 'LControl', 'PE']
 # Reorder the rows
 summary_stats = summary_stats.reindex(desired_order)
 
+print("\n====== Summary Stats ======")
 # Rounding for cleaner output
 summary_stats = summary_stats.round(2)
 
@@ -156,7 +155,7 @@ hue_order = ['Remitted', 'LControl', 'Persistent', 'Incident']
 labels = ['Longitudinal Controls', 'Incident', 'Remittent', 'Persistent']
 
 # Plot observed means by group at each timepoint
-sns.lineplot(data=long_data, x='Time', y='brainPAD_standardized', hue='group', estimator='mean', ci='sd', marker='o')
+sns.lineplot(data=long_data, x='Time', y='brainPAD_standardized', hue='group', estimator='mean', marker='o')
 
 plt.title('Brain Age Predictions Timepoints')
 plt.xlabel('Time')

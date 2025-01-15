@@ -1,21 +1,9 @@
 import warnings
 warnings.filterwarnings("ignore")
 
-import pandas as pd
-import numpy as np
+from utils import *
 
-from scipy import stats
 from scipy.stats import shapiro, chi2_contingency, kruskal
-
-from utils import (
-    # The following are just examples; adapt them to your actual code
-    calculate_cohen_d,
-    fit_glm_and_get_all_coef,
-    rain_cloud_plot_VI,
-    rain_cloud_plot_VIII
-)
-
-# ============ 1) Data Loading ============
 
 ALSPAC_I_merged = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/Data/ALSPAC_I_merged.csv')
 ALSPAC_II_merged = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/Data/ALSPAC_II_merged.csv')
@@ -27,8 +15,6 @@ ALSPAC_II_merged['ID'] = new_values
 # Keep only subjects who appear in both data frames
 X_test_Cardiff_I = ALSPAC_I_merged[ALSPAC_I_merged['ID'].isin(ALSPAC_II_merged['ID'])]
 X_test_Cardiff_II = ALSPAC_II_merged[ALSPAC_II_merged['ID'].isin(ALSPAC_I_merged['ID'])]
-
-# ============ 2) Classify "group" by pliks18TH ============
 
 # For X_test_Cardiff_II
 X_test_Cardiff_II.loc[X_test_Cardiff_II['pliks18TH'] == 0, 'group'] = '0'
@@ -44,8 +30,6 @@ X_test_Cardiff_I.loc[X_test_Cardiff_I['pliks18TH'] == 0, 'group'] = '0'
 X_test_Cardiff_I.loc[X_test_Cardiff_I['pliks18TH'] == 1, 'group'] = '1'
 X_test_Cardiff_I.loc[X_test_Cardiff_I['pliks18TH'] == 2, 'group'] = '2'
 X_test_Cardiff_I.loc[X_test_Cardiff_I['pliks18TH'] == 3, 'group'] = '3'
-
-# ============ 3) Rename Columns & Merge Timepoints ============
 
 Longi_I_cardiff = X_test_Cardiff_I[[
     'ID', 'Age', 'sex', 'pliks18TH', 'pliks20TH', 'pliks30TH',
@@ -76,8 +60,6 @@ longAll = pd.merge(Longi_I_cardiff, Longi_II_cardiff, on='ID', how='inner')
 longAll['DeltaBrainPAD'] = longAll['brainPAD_standardized_II'] - longAll['brainPAD_standardized_I']
 longAll['Age_dif'] = longAll['Age_II'] - longAll['Age_I']
 
-# ============ 4) Create Subsets by group_II ============
-
 Control_Cardiff = longAll[longAll['group_II'] == '0']
 NoPersist_Cardiff = longAll[longAll['group_II'] == '1']
 Persist_Cardiff = longAll[longAll['group_II'] == '2']
@@ -85,8 +67,6 @@ Incident_Cardiff = longAll[longAll['group_II'] == '3']
 
 # Example: combine subgroups "1", "2", "3" if needed
 LongPE = pd.concat([NoPersist_Cardiff, Persist_Cardiff, Incident_Cardiff], ignore_index=True)
-
-# ============ 5) Basic Summaries ============
 
 # Example aggregated stats
 summary_stats = longAll.groupby('group_II').agg(
@@ -106,9 +86,6 @@ summary_stats = summary_stats.round(2)
 
 # Print the summary statistics
 print(summary_stats.to_string(), '\n')
-
-
-# ============ 6) Cohen's D Examples ============
 
 groups = {
     "0": Control_Cardiff['DeltaBrainPAD'].values,
@@ -133,7 +110,21 @@ for p in pairs:
     print(f"Cohen's D {p[0]} vs {p[1]}: {d_val:.3f}")
 print()
 
-# ============ 7) Pairwise Analysis ============
+hue_order = ['Remitted', 'LControl', 'Persistent', 'Incident']
+labels = ['Longitudinal Controls', 'Incident', 'Remittent', 'Persistent']
+
+# Plot observed means by group at each timepoint
+sns.lineplot(data=longAll, x='Time', y='brainPAD_standardized', hue='group', estimator='mean', marker='o')
+
+plt.title('Brain Age Predictions Timepoints')
+plt.xlabel('Time')
+plt.ylabel('Brain Age (Predicted)')
+
+# Get current legend and change labels
+handles, _ = plt.gca().get_legend_handles_labels()
+plt.legend(handles=handles, labels=labels, title='Group')
+
+plt.show()
 
 print('--------------------------------')
 print('====== PAIRWISE ANALYSIS =======')
@@ -190,8 +181,6 @@ long_data = pd.concat([timepoint_I, timepoint_II], ignore_index=True)
 # (Add a 'n_euler' column if needed)
 long_data['n_euler'] = 2  # example
 
-# ============ Permutation Test ============
-
 print('===== Permutation test =====')
 
 longAll['group_cat'] = np.where(longAll['group_II'] == '0', 0, 1)  # e.g. '0' is control vs everything else
@@ -225,8 +214,6 @@ for c in covariates:
     p_value = np.mean(np.abs(distribution) >= np.abs(observed))
     print(f"Covariate: {c}, Obs={observed:.3}, p={p_value:.2e}")
 print()
-
-# ============ 8) Trend Analysis ============
 
 print('-----------------------------')
 print('====== TREND ANALYSIS =======')
@@ -313,8 +300,6 @@ for covariate in covariates:
     # Print the observed coefficient and the p-value for each covariate
     print(f"Coeficiente observado ({covariate}): {observed_coef}")
     print(f"p-valor de la prueba de permutación ({covariate}): {p_value}")
-
-# ============ 9) Plotting ============
 
 # Custom Rain Cloud plots
 rain_cloud_plot_VI(longAll)

@@ -853,7 +853,7 @@ def model_evaluation(X_test, results):
     edades_test = X_test_df['Age'].values.tolist()
 
     # Load Model
-    file_path = ('/home/rafa/PycharmProjects/ALSPAC_BA/Model/SimpleMLP_nfeats_100_fold_0.pkl')
+    file_path = ('/home/rafa/PycharmProjects/ALSPAC_BA/Model/MLP_nfeats_100.pkl')
     with open(file_path, 'rb') as file:
         regresor = pickle.load(file)
 
@@ -922,6 +922,8 @@ def assign_groups(df, conditions, group_col='group'):
     Returns:
     - pd.DataFrame: The updated DataFrame with the group column.
     """
+    df = df.copy()
+
     df[group_col] = 'NotDefined'  # Default value
     for condition, label in conditions.items():
         df.loc[condition(df), group_col] = label

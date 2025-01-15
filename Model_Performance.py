@@ -1,7 +1,6 @@
 from utils import *
 import ast
 
-X_train = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/Model/Datos_train_sample.csv')
 x_test = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/Model/Datos_Test_sample.csv')
 X_test_OutSample = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/Model/Datos_AgeRisk_To_Test.csv')
 
@@ -20,7 +19,7 @@ features_used = X_test.columns.tolist()
 
 # Evaluate the model
 print("Evaluating the model...")
-result_x_test = model_evaluation(X_train, X_test, X_test_results, features)
+result_x_test = model_evaluation(X_test, X_test_results)
 print("Model evaluation completed.")
 
 # Plot the comparison of age vs. predicted age
@@ -39,7 +38,7 @@ X_test = pd.concat([X_test_OutSample.iloc[:, [2]], X_test_OutSample.iloc[:, 7:]]
 
 # Evaluate the model
 print("Evaluating the model on the out-of-sample data...")
-result_AgeRisk = model_evaluation(X_train, X_test, Age_Risk_results, features)
+result_AgeRisk = model_evaluation(X_test, Age_Risk_results)
 print("Out-of-sample model evaluation completed.")
 
 # Plot the comparison of age vs. predicted age
