@@ -1,5 +1,4 @@
-import warnings
-from utils_Train import *
+from utils import *
 import ast
 
 X_train = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/Model/Datos_train_sample.csv')

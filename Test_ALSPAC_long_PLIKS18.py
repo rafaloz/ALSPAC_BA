@@ -1,425 +1,294 @@
 import warnings
 warnings.filterwarnings("ignore")
-from statsmodels.formula.api import glm
+
 import pandas as pd
 import numpy as np
-import statsmodels.formula.api as smf
-import matplotlib.pyplot as plt
-import seaborn as sns
+
 from scipy import stats
-import statsmodels.api as sm
+from scipy.stats import shapiro, chi2_contingency, kruskal
 
-def calculate_cohen_d(group1, group2):
-    mean1, mean2 = np.mean(group1), np.mean(group2)
-    std1, std2 = np.std(group1, ddof=1), np.std(group2, ddof=1)
-    n1, n2 = len(group1), len(group2)
-    pooled_std = np.sqrt(((n1 - 1) * std1**2 + (n2 - 1) * std2**2) / (n1 + n2 - 2))
-    return (mean2 - mean1) / pooled_std
+from utils import (
+    # The following are just examples; adapt them to your actual code
+    calculate_cohen_d,
+    fit_glm_and_get_all_coef,
+    rain_cloud_plot_VI,
+    rain_cloud_plot_VIII
+)
 
-# Función para ajustar el GLM y devolver todos los coefs
-def fit_glm_and_get_all_coef(data, formula):
-    model = glm(formula=formula, data=data, family=sm.families.Gaussian()).fit()
-    return model.params
+# ============ 1) Data Loading ============
 
-ALSPAC_I_merged = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/ALSPAC_I_merged.csv')
-ALSPAC_II_merged = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/ALSPAC_II_merged_II.csv')
+ALSPAC_I_merged = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/Data/ALSPAC_I_merged.csv')
+ALSPAC_II_merged = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/Data/ALSPAC_II_merged.csv')
 
+# Example: rename 'ID' for ALSPAC_II_merged if needed
 new_values = [value[4:] + '_brain' for value in ALSPAC_II_merged['ID']]
 ALSPAC_II_merged['ID'] = new_values
 
+# Keep only subjects who appear in both data frames
 X_test_Cardiff_I = ALSPAC_I_merged[ALSPAC_I_merged['ID'].isin(ALSPAC_II_merged['ID'])]
 X_test_Cardiff_II = ALSPAC_II_merged[ALSPAC_II_merged['ID'].isin(ALSPAC_I_merged['ID'])]
 
-# Crear una nueva columna 'grupo' con un valor por defecto
-X_test_Cardiff_II.loc[:, 'grupo'] = 'NoDefinido'
+# ============ 2) Classify "group" by pliks18TH ============
 
-# Asignar el grupo correspondiente según las condiciones
-X_test_Cardiff_II.loc[(X_test_Cardiff_II['pliks18TH'] == 0), 'grupo'] = '0'
-X_test_Cardiff_II.loc[(X_test_Cardiff_II['pliks18TH'] == 1), 'grupo'] = '1'
-X_test_Cardiff_II.loc[(X_test_Cardiff_II['pliks18TH'] == 2), 'grupo'] = '2'
-X_test_Cardiff_II.loc[(X_test_Cardiff_II['pliks18TH'] == 3), 'grupo'] = '3'
+# For X_test_Cardiff_II
+X_test_Cardiff_II.loc[X_test_Cardiff_II['pliks18TH'] == 0, 'group'] = '0'
+X_test_Cardiff_II.loc[X_test_Cardiff_II['pliks18TH'] == 1, 'group'] = '1'
+X_test_Cardiff_II.loc[X_test_Cardiff_II['pliks18TH'] == 2, 'group'] = '2'
+X_test_Cardiff_II.loc[X_test_Cardiff_II['pliks18TH'] == 3, 'group'] = '3'
 
+# Copy pliks30TH from II into I
 X_test_Cardiff_I['pliks30TH'] = X_test_Cardiff_II['pliks30TH'].values
-X_test_Cardiff_I.loc[(X_test_Cardiff_I['pliks18TH'] == 0), 'grupo'] = '0'
-X_test_Cardiff_I.loc[(X_test_Cardiff_I['pliks18TH'] == 1), 'grupo'] = '1'
-X_test_Cardiff_I.loc[(X_test_Cardiff_I['pliks18TH'] == 2), 'grupo'] = '2'
-X_test_Cardiff_I.loc[(X_test_Cardiff_I['pliks18TH'] == 3), 'grupo'] = '3'
 
-Longi_I_cardiff = X_test_Cardiff_I[['ID', 'Edad', 'sexo(M=1;F=0)', 'pliks18TH', 'pliks20TH', 'pliks30TH', 'brainPAD_standardized', 'grupo']]
-Longi_I_cardiff.columns = ['ID', 'Edad_I', 'sexo(M=1;F=0)_I', 'pliks18TH_I', 'pliks20TH_I', 'pliks30TH_I', 'brainPAD_standardized_I', 'grupo_I']
-Longi_II_cardiff = X_test_Cardiff_II[['ID', 'Edad', 'sexo(M=1;F=0)', 'pliks18TH', 'pliks20TH', 'pliks30TH', 'brainPAD_standardized', 'grupo']]
-Longi_II_cardiff.columns = ['ID', 'Edad_II', 'sexo(M=1;F=0)_II', 'pliks18TH_II', 'pliks20TH_II', 'pliks30TH_II', 'brainPAD_standardized_II', 'grupo_II']
+# For X_test_Cardiff_I
+X_test_Cardiff_I.loc[X_test_Cardiff_I['pliks18TH'] == 0, 'group'] = '0'
+X_test_Cardiff_I.loc[X_test_Cardiff_I['pliks18TH'] == 1, 'group'] = '1'
+X_test_Cardiff_I.loc[X_test_Cardiff_I['pliks18TH'] == 2, 'group'] = '2'
+X_test_Cardiff_I.loc[X_test_Cardiff_I['pliks18TH'] == 3, 'group'] = '3'
 
-longi_todos = pd.merge(Longi_I_cardiff, Longi_II_cardiff, on='ID', how='inner')
-longi_todos.reset_index(drop=True, inplace=True)
-longi_todos['DeltaBrainPAD'] = Longi_II_cardiff['brainPAD_standardized_II'].values-Longi_I_cardiff['brainPAD_standardized_I'].values
+# ============ 3) Rename Columns & Merge Timepoints ============
 
-Control_Cardiff_Longi_control = longi_todos[longi_todos['grupo_II']=='0']
-Control_Cardiff_Longi_NoPersi = longi_todos[longi_todos['grupo_II']=='1']
-Control_Cardiff_Longi_Persi = longi_todos[longi_todos['grupo_II']=='2']
-Control_Cardiff_Longi_Inci = longi_todos[longi_todos['grupo_II']=='3']
+Longi_I_cardiff = X_test_Cardiff_I[[
+    'ID', 'Age', 'sex', 'pliks18TH', 'pliks20TH', 'pliks30TH',
+    'brainPAD_standardized', 'group'
+]]
+Longi_I_cardiff = Longi_I_cardiff.rename(columns={
+    'brainPAD_standardized': 'brainPAD_standardized_I',
+    'group': 'group_I',
+    'Age': 'Age_I',
+    'sex': 'sex_I'
+})
 
-print('\nGrupo Control')
-print('nº cases total: '+str(Control_Cardiff_Longi_control.shape[0]))
-print('Age average: '+str(Control_Cardiff_Longi_control['Edad_II'].mean()))
-print('Age std: '+str(Control_Cardiff_Longi_control['Edad_II'].std()))
-print('Age max: '+str(Control_Cardiff_Longi_control['Edad_II'].max()))
-print('Age min: '+str(Control_Cardiff_Longi_control['Edad_II'].min()))
-print('Males: '+str(Control_Cardiff_Longi_control['sexo(M=1;F=0)_II'].sum()))
-print('Females: '+str(Control_Cardiff_Longi_control.shape[0]-Control_Cardiff_Longi_control['sexo(M=1;F=0)_II'].sum()))
+Longi_II_cardiff = X_test_Cardiff_II[[
+    'ID', 'Age', 'sex', 'pliks18TH', 'pliks20TH', 'pliks30TH',
+    'brainPAD_standardized', 'group'
+]]
+Longi_II_cardiff = Longi_II_cardiff.rename(columns={
+    'brainPAD_standardized': 'brainPAD_standardized_II',
+    'group': 'group_II',
+    'Age': 'Age_II',
+    'sex': 'sex_II'
+})
 
-print('\nGrupo Disminuido')
-print('nº cases total: '+str(Control_Cardiff_Longi_NoPersi.shape[0]))
-print('Age average: '+str(Control_Cardiff_Longi_NoPersi['Edad_II'].mean()))
-print('Age std: '+str(Control_Cardiff_Longi_NoPersi['Edad_II'].std()))
-print('Age max: '+str(Control_Cardiff_Longi_NoPersi['Edad_II'].max()))
-print('Age min: '+str(Control_Cardiff_Longi_NoPersi['Edad_II'].min()))
-print('Males: '+str(Control_Cardiff_Longi_NoPersi['sexo(M=1;F=0)_II'].sum()))
-print('Females: '+str(Control_Cardiff_Longi_NoPersi.shape[0]-Control_Cardiff_Longi_NoPersi['sexo(M=1;F=0)_II'].sum()))
+# Merge both timepoints
+longAll = pd.merge(Longi_I_cardiff, Longi_II_cardiff, on='ID', how='inner')
 
-print('\nGrupo Persistente')
-print('nº cases total: '+str(Control_Cardiff_Longi_Persi.shape[0]))
-print('Age average: '+str(Control_Cardiff_Longi_Persi['Edad_II'].mean()))
-print('Age std: '+str(Control_Cardiff_Longi_Persi['Edad_II'].std()))
-print('Age max: '+str(Control_Cardiff_Longi_Persi['Edad_II'].max()))
-print('Age min: '+str(Control_Cardiff_Longi_Persi['Edad_II'].min()))
-print('Males: '+str(Control_Cardiff_Longi_Persi['sexo(M=1;F=0)_II'].sum()))
-print('Females: '+str(Control_Cardiff_Longi_Persi.shape[0]-Control_Cardiff_Longi_Persi['sexo(M=1;F=0)_II'].sum()))
+# Compute DeltaBrainPAD
+longAll['DeltaBrainPAD'] = longAll['brainPAD_standardized_II'] - longAll['brainPAD_standardized_I']
+longAll['Age_dif'] = longAll['Age_II'] - longAll['Age_I']
 
-print('\nGrupo Aumentado')
-print('nº cases total: '+str(Control_Cardiff_Longi_Inci.shape[0]))
-print('Age average: '+str(Control_Cardiff_Longi_Inci['Edad_II'].mean()))
-print('Age std: '+str(Control_Cardiff_Longi_Inci['Edad_II'].std()))
-print('Age max: '+str(Control_Cardiff_Longi_Inci['Edad_II'].max()))
-print('Age min: '+str(Control_Cardiff_Longi_Inci['Edad_II'].min()))
-print('Males: '+str(Control_Cardiff_Longi_Inci['sexo(M=1;F=0)_II'].sum()))
-print('Females: '+str(Control_Cardiff_Longi_Inci.shape[0]-Control_Cardiff_Longi_Inci['sexo(M=1;F=0)_II'].sum()))
+# ============ 4) Create Subsets by group_II ============
 
-# Printing the number of individuals in each dataframe
-print("Number of individuals:", longi_todos.shape[0])
-print("Number of individuals in longi control:", Control_Cardiff_Longi_control.shape[0])
-print("Number of individuals in longi noPersi:", Control_Cardiff_Longi_NoPersi.shape[0])
-print("Number of individuals in longi Persi:", Control_Cardiff_Longi_Persi.shape[0])
-print("Number of individuals in longi Inci:", Control_Cardiff_Longi_Inci.shape[0])
+Control_Cardiff = longAll[longAll['group_II'] == '0']
+NoPersist_Cardiff = longAll[longAll['group_II'] == '1']
+Persist_Cardiff = longAll[longAll['group_II'] == '2']
+Incident_Cardiff = longAll[longAll['group_II'] == '3']
 
-print("longi Disminuido:", Control_Cardiff_Longi_NoPersi['DeltaBrainPAD'].mean())
-print("longi Persi:", Control_Cardiff_Longi_Persi['DeltaBrainPAD'].mean())
-print("longi control:", Control_Cardiff_Longi_control['DeltaBrainPAD'].mean())
-print("longi Aumentado:", Control_Cardiff_Longi_Inci['DeltaBrainPAD'].mean())
+# Example: combine subgroups "1", "2", "3" if needed
+LongPE = pd.concat([NoPersist_Cardiff, Persist_Cardiff, Incident_Cardiff], ignore_index=True)
 
-LongiConPE = pd.concat([Control_Cardiff_Longi_Persi, Control_Cardiff_Longi_Inci, Control_Cardiff_Longi_NoPersi], axis=0, ignore_index=True)
+# ============ 5) Basic Summaries ============
 
-print('\nGrupo PE todo')
-print('nº cases total: '+str(LongiConPE.shape[0]))
-print('Age average: '+str(LongiConPE['Edad_II'].mean()))
-print('Age std: '+str(LongiConPE['Edad_II'].std()))
-print('Age max: '+str(LongiConPE['Edad_II'].max()))
-print('Age min: '+str(LongiConPE['Edad_II'].min()))
-print('Males: '+str(LongiConPE['sexo(M=1;F=0)_II'].sum()))
-print('Females: '+str(LongiConPE.shape[0]-LongiConPE['sexo(M=1;F=0)_II'].sum()))
+# Example aggregated stats
+summary_stats = longAll.groupby('group_II').agg(
+    N=('ID', 'count'),
+    mean_age=('Age_II', 'mean'),
+    std_age=('Age_II', 'std'),
+    min_age=('Age_II', 'min'),
+    max_age=('Age_II', 'max'),
+    num_males=('sex_II', 'sum'),  # assuming sex_II==1 => male
+    num_females=('sex_II', lambda x: (x==0).sum()),
+    mean_delta=('DeltaBrainPAD', 'mean')
+).round(2)
 
-LongiALl = pd.concat([Control_Cardiff_Longi_control, LongiConPE], axis=0, ignore_index=True)
+print("\n====== Summary Stats ======")
+# Rounding for cleaner output
+summary_stats = summary_stats.round(2)
 
-print('\nGrupo Longi Entero todo')
-print('nº cases total: '+str(LongiALl.shape[0]))
-print('Age average: '+str(LongiALl['Edad_II'].mean()))
-print('Age std: '+str(LongiALl['Edad_II'].std()))
-print('Age max: '+str(LongiALl['Edad_II'].max()))
-print('Age min: '+str(LongiALl['Edad_II'].min()))
-print('Males: '+str(LongiALl['sexo(M=1;F=0)_II'].sum()))
-print('Females: '+str(LongiALl.shape[0]-LongiALl['sexo(M=1;F=0)_II'].sum()))
+# Print the summary statistics
+print(summary_stats.to_string(), '\n')
 
-# Calculate Cohen's d for each pair of levels
-cohen_d_0_123 = calculate_cohen_d(Control_Cardiff_Longi_control['DeltaBrainPAD'].values, LongiConPE['DeltaBrainPAD'].values)
-cohen_d_0_1 = calculate_cohen_d(Control_Cardiff_Longi_control['DeltaBrainPAD'].values, Control_Cardiff_Longi_NoPersi['DeltaBrainPAD'].values)
-cohen_d_0_2 = calculate_cohen_d(Control_Cardiff_Longi_control['DeltaBrainPAD'].values, Control_Cardiff_Longi_Persi['DeltaBrainPAD'].values)
-cohen_d_0_3 = calculate_cohen_d(Control_Cardiff_Longi_control['DeltaBrainPAD'].values, Control_Cardiff_Longi_Inci['DeltaBrainPAD'].values)
-cohen_d_1_2 = calculate_cohen_d(Control_Cardiff_Longi_NoPersi['DeltaBrainPAD'].values, Control_Cardiff_Longi_Persi['DeltaBrainPAD'].values)
-cohen_d_1_3 = calculate_cohen_d(Control_Cardiff_Longi_NoPersi['DeltaBrainPAD'].values, Control_Cardiff_Longi_Inci['DeltaBrainPAD'].values)
-cohen_d_2_3 = calculate_cohen_d(Control_Cardiff_Longi_Persi['DeltaBrainPAD'].values, Control_Cardiff_Longi_Inci['DeltaBrainPAD'].values)
 
-print("Cohen's D 0_123: "+str(cohen_d_0_123))
-print("Cohen's D 0_1: "+str(cohen_d_0_1))
-print("Cohen's D 0_2: "+str(cohen_d_0_2))
-print("Cohen's D 0_3: "+str(cohen_d_0_3))
-print("Cohen's D 1_2: "+str(cohen_d_1_2))
-print("Cohen's D 1_3: "+str(cohen_d_1_3))
-print("Cohen's D 2_3: "+str(cohen_d_2_3))
+# ============ 6) Cohen's D Examples ============
 
-# Shapiro-Wilk tests for normality
-for group, name in [(LongiConPE['Edad_II'], "LongiConPE"), (Control_Cardiff_Longi_control['Edad_II'], "Control_longi")]:
-    stat, p_value = stats.shapiro(group)
-    print(f"Shapiro-Wilk Test Statistic {name}: {stat:.4f}, P-value: {p_value:.4f}")
-    print(f"{name} follows a normal distribution." if p_value >= 0.05 else f"{name} does not follow a normal distribution.")
+groups = {
+    "0": Control_Cardiff['DeltaBrainPAD'].values,
+    "1": NoPersist_Cardiff['DeltaBrainPAD'].values,
+    "2": Persist_Cardiff['DeltaBrainPAD'].values,
+    "3": Incident_Cardiff['DeltaBrainPAD'].values,
+    "123": LongPE['DeltaBrainPAD'].values
+}
 
-# Levene's test for homogeneity of variances (homoscedasticity)
-levene_stat, levene_p = stats.levene(LongiConPE['Edad_II'], Control_Cardiff_Longi_control['Edad_II'])
-print(f"Levene's Test: Statistic={levene_stat:.4f}, P-value={levene_p:.4f}")
-print("Homoscedasticity assumption holds." if levene_p >= 0.05 else "Homoscedasticity assumption does not hold.")
+pairs = [
+    ("0", "123"),
+    ("0", "1"),
+    ("0", "2"),
+    ("0", "3"),
+    ("1", "2"),
+    ("1", "3"),
+    ("2", "3")
+]
+print("====== Cohen's D ======")
+for p in pairs:
+    d_val = calculate_cohen_d(groups[p[0]], groups[p[1]])
+    print(f"Cohen's D {p[0]} vs {p[1]}: {d_val:.3f}")
+print()
 
-# Choose the appropriate test for comparing group means based on normality and homoscedasticity
-if p_value >= 0.05 and levene_p >= 0.05:
-    # Perform t-test (both groups are normal, variances are equal)
-    t_stat, t_p_value = stats.ttest_ind(LongiConPE['Edad_II'], Control_Cardiff_Longi_control['Edad_II'])
-    print(f"T-test: Statistic={t_stat:.4f}, P-value={t_p_value:.4f}")
-elif p_value < 0.05 and levene_p >= 0.05:
-    # Perform Welch's t-test (both groups normal, variances not equal)
-    t_stat, t_p_value = stats.ttest_ind(LongiConPE['Edad_II'], Control_Cardiff_Longi_control['Edad_II'], equal_var=False)
-    print(f"Welch's T-test: Statistic={t_stat:.4f}, P-value={t_p_value:.4f}")
-else:
-    # Perform Mann-Whitney U test (non-normal distribution)
-    u_stat, u_p_value = stats.mannwhitneyu(LongiConPE['Edad_II'], Control_Cardiff_Longi_control['Edad_II'])
-    print(f"Mann-Whitney U Test: Statistic={u_stat:.4f}, P-value={u_p_value:.4f}")
+# ============ 7) Pairwise Analysis ============
 
-from scipy.stats import chi2_contingency
+print('--------------------------------')
+print('====== PAIRWISE ANALYSIS =======')
+print('--------------------------------')
 
-data_2x4 = np.array([
-    [19, 37],  # Group 1
-    [20, 37]  # Group 2
+print('--- check Age & sex ---')
+
+# Example: Shapiro-Wilk test for Age_II in "Control" vs "LongPE"
+for subset, label in [(Control_Cardiff, 'Control'), (LongPE, 'LongPE')]:
+    stat, pval = shapiro(subset['Age_II'])
+    print(f"{label}: W={stat:.3}, p={pval:.2e}")
+
+# Levene test (Age_II) for the same two groups
+lev_stat, lev_p = stats.levene(Control_Cardiff['Age_II'], LongPE['Age_II'])
+print(f"\nLevene's Test (Age_II) Control vs LongPE: stat={lev_stat:.3}, p={lev_p:.2e}")
+
+u_stat, u_p_val = stats.mannwhitneyu(Control_Cardiff['Age_II'], LongPE['Age_II'], alternative='two-sided')
+
+print(f"Mann-Whitney U: stat={u_stat:.3}, p={u_p_val:.2e}\n")
+
+# Example: Chi-square on sex
+data_2x2 = np.array([
+    [Control_Cardiff['sex_II'].sum(), LongPE['sex_II'].sum()],
+    [(Control_Cardiff['sex_II']==0).sum(), (LongPE['sex_II']==0).sum()]
 ])
+chi2_stat, chi2_p, dof, exp = chi2_contingency(data_2x2)
+print("Chi-square (sex) Control vs LongPE:")
+print(f" chi2={chi2_stat:.3}, p={chi2_p:.2e}, dof={dof}")
 
-# Perform Chi-Square Test
-chi2, p, dof, expected = chi2_contingency(data_2x4)
-
-print("Chi2 Statistic:", chi2)
-print("P-value:", p)
-print("Degrees of Freedom:", dof)
-print("Expected Frequencies:\n", expected)
-
-longi_todos['n_euler'] = 2
-longi_todos.loc[:, 'grupo_cat'] = 'NoDefinido'
-longi_todos.loc[(longi_todos['pliks18TH_I'] != 0), 'grupo_cat'] = 'Enfermos'
-longi_todos.loc[(longi_todos['pliks18TH_I'] == 0), 'grupo_cat'] = 'Controles'
-
-# Map 'grupo' to 'Grupo_ordinal' if needed
-mapping = {'1': 1, '0': 0, '2': 2, '3': 3}
-longi_todos['Grupo_ordinal'] = longi_todos['grupo_II'].map(mapping).astype(int)
-
-print("longi Control:", Control_Cardiff_Longi_control['DeltaBrainPAD'].mean())
-print("longi NoPersistente:", Control_Cardiff_Longi_NoPersi['DeltaBrainPAD'].mean())
-print("longi Persistente:", Control_Cardiff_Longi_Persi['DeltaBrainPAD'].mean())
-print("longi Incidente:", Control_Cardiff_Longi_Inci['DeltaBrainPAD'].mean())
-
-# Shapiro-Wilk test for normality within each group
-print("Shapiro-Wilk Test Results for Normality (Edad_II):")
-normality_results = []
-for group in sorted(longi_todos['Grupo_ordinal'].unique()):
-    sample = longi_todos[longi_todos['Grupo_ordinal'] == group]['Edad_II']
-    stat, p_value = stats.shapiro(sample)
-    print(f"Group {group}: Shapiro-Wilk Statistic={stat:.4f}, P-value={p_value:.4f}")
-    normality_results.append(p_value >= 0.05)  # True if the group is normally distributed
-
-# Levene's test for homogeneity of variances (homoscedasticity)
-levene_stat, levene_p = stats.levene(*[longi_todos[longi_todos['Grupo_ordinal'] == group]['Edad_II'] for group in sorted(longi_todos['Grupo_ordinal'].unique())])
-print(f"\nLevene's Test for Homogeneity of Variances: Statistic={levene_stat:.4f}, P-value={levene_p:.4f}")
-
-# Choose the appropriate test for comparing group means based on normality and homoscedasticity
-if all(normality_results) and levene_p >= 0.05:
-    # Perform ANOVA (if all groups are normal and variances are equal)
-    f_stat, f_p_value = stats.f_oneway(*[longi_todos[longi_todos['Grupo_ordinal'] == group]['Edad_II'] for group in sorted(longi_todos['Grupo_ordinal'].unique())])
-    print(f"\nANOVA Test: Statistic={f_stat:.4f}, P-value={f_p_value:.4f}")
-elif all(normality_results) and levene_p < 0.05:
-    # Perform Welch's ANOVA (if all groups are normal but variances are unequal)
-    welch_stat, welch_p_value = stats.ttest_ind(*[longi_todos[longi_todos['Grupo_ordinal'] == group]['Edad_II'] for group in sorted(longi_todos['Grupo_ordinal'].unique())], equal_var=False)
-    print(f"\nWelch's ANOVA: Statistic={welch_stat:.4f}, P-value={welch_p_value:.4f}")
-else:
-    # Perform Kruskal-Wallis Test (if normality is violated in any group)
-    kruskal_stat, kruskal_p_value = stats.kruskal(*[longi_todos[longi_todos['Grupo_ordinal'] == group]['Edad_II'] for group in sorted(longi_todos['Grupo_ordinal'].unique())])
-    print(f"\nKruskal-Wallis Test: Statistic={kruskal_stat:.4f}, P-value={kruskal_p_value:.4f}")
-
-from scipy.stats import chi2_contingency
-
-data_2x4 = np.array([
-    [13, 23],  # Group 1
-    [1, 5], # Group 2
-    [6, 9],  # Group 3
-    [19, 37]  # Group 4
-])
-
-# Perform Chi-Square Test
-chi2, p, dof, expected = chi2_contingency(data_2x4)
-
-print("Chi2 Statistic:", chi2)
-print("P-value:", p)
-print("Degrees of Freedom:", dof)
-print("Expected Frequencies:\n", expected)
-
-# Reshape data into long format
-timepoint_I = longi_todos[['ID', 'Edad_I', 'sexo(M=1;F=0)_I', 'brainPAD_standardized_I', 'grupo_I', 'n_euler', 'grupo_cat']].copy()
+# Convert to "long" format
+timepoint_I = longAll[[
+    'ID', 'Age_I', 'sex_I', 'brainPAD_standardized_I', 'group_I'
+]].copy()
 timepoint_I['Time'] = 'I'
 timepoint_I.rename(columns={
-    'Edad_I': 'Edad',
-    'sexo(M=1;F=0)_I': 'sexo',
+    'Age_I': 'Age',
+    'sex_I': 'sex',
     'brainPAD_standardized_I': 'brainPAD_standardized',
-    'grupo_I': 'grupo'
+    'group_I': 'group'
 }, inplace=True)
 
-timepoint_II = longi_todos[['ID', 'Edad_II', 'sexo(M=1;F=0)_II', 'brainPAD_standardized_II', 'grupo_II', 'n_euler', 'grupo_cat']].copy()
+timepoint_II = longAll[[
+    'ID', 'Age_II', 'sex_II', 'brainPAD_standardized_II', 'group_II'
+]].copy()
 timepoint_II['Time'] = 'II'
 timepoint_II.rename(columns={
-    'Edad_II': 'Edad',
-    'sexo(M=1;F=0)_II': 'sexo',
+    'Age_II': 'Age',
+    'sex_II': 'sex',
     'brainPAD_standardized_II': 'brainPAD_standardized',
-    'grupo_II': 'grupo'
+    'group_II': 'group'
 }, inplace=True)
 
 long_data = pd.concat([timepoint_I, timepoint_II], ignore_index=True)
+# (Add a 'n_euler' column if needed)
+long_data['n_euler'] = 2  # example
 
-# Map 'grupo' to 'Grupo_ordinal' if needed
-mapping = {'0': 0, '1': 1, '2': 2, '3': 3}
-long_data['Grupo_ordinal'] = long_data['grupo'].map(mapping)
+# ============ Permutation Test ============
 
-# Define the GEE formula
-gee_formula = 'brainPAD_standardized ~ grupo_cat * Time + Edad'
+print('===== Permutation test =====')
 
-# Fit the GEE model
-gee_model = smf.gee(formula=gee_formula,
-                    data=long_data,
-                    groups=long_data['ID'],
-                    family=sm.families.Gaussian(),
-                    cov_struct=sm.cov_struct.Exchangeable()).fit()
+longAll['group_cat'] = np.where(longAll['group_II'] == '0', 0, 1)  # e.g. '0' is control vs everything else
+longAll['n_euler'] = 2
 
-# Print the summary
-print(gee_model.summary())
+n_permutations = 5000
+formula_perm = "DeltaBrainPAD ~ group_cat + n_euler + Age_dif"
+covariates = ['group_cat', 'n_euler', 'Age_dif']
 
+# 1) Fit original
+obs_coefs = fit_glm_and_get_all_coef(longAll, formula_perm)
 
-# Define the GEE formula for trend analysis
-gee_formula_trend = 'brainPAD_standardized ~ Grupo_ordinal * Time'
+# 2) Permute
+df_perm = longAll.copy()
+perm_coefs = {c: [] for c in covariates}
 
-# Fit the GEE model for trend analysis
-gee_model_trend = smf.gee(formula=gee_formula_trend,
-                          data=long_data,
-                          groups=long_data['ID'],
-                          family=sm.families.Gaussian(),
-                          cov_struct=sm.cov_struct.Exchangeable()).fit()
+for _ in range(n_permutations):
+    df_perm['DeltaBrainPAD'] = np.random.permutation(longAll['DeltaBrainPAD'])
+    perm_res = fit_glm_and_get_all_coef(df_perm, formula_perm)
+    for c in covariates:
+        perm_coefs[c].append(perm_res[c])
 
-# Print the summary
-print(gee_model_trend.summary())
+# 3) Convert to arrays
+for c in covariates:
+    perm_coefs[c] = np.array(perm_coefs[c])
 
-hue_order = [0, 1, 2, 3]
-labels = ['Controls', 'Suspected', 'Definite', 'Clinical Disorder']
+# 4) Compare to observed
+for c in covariates:
+    observed = obs_coefs[c]
+    distribution = perm_coefs[c]
+    p_value = np.mean(np.abs(distribution) >= np.abs(observed))
+    print(f"Covariate: {c}, Obs={observed:.3}, p={p_value:.2e}")
+print()
 
-# Plot observed means by group at each timepoint
-sns.lineplot(data=long_data, x='Time', y='brainPAD_standardized', hue='grupo', estimator='mean', ci='sd', marker='o')
+# ============ 8) Trend Analysis ============
 
-plt.title('Brain Age Predictions Timepoints')
-plt.xlabel('Time')
-plt.ylabel('Brain Age (Predicted)')
+print('-----------------------------')
+print('====== TREND ANALYSIS =======')
+print('-----------------------------')
 
-# Get current legend and change labels
-handles, _ = plt.gca().get_legend_handles_labels()
-plt.legend(handles=handles, labels=labels, title='Group')
+print('--- check Age & sex ---')
 
-plt.show()
+# Shapiro-Wilk Test for Normality within each group
+print("Shapiro-Wilk Test Results for Normality (Age): ")
+for group in sorted(longAll['group_II'].unique()):
+    sample = longAll[longAll['group_II'] == group]['Age_II']
+    # Perform the Shapiro-Wilk test on the sample
+    stat, p_value = stats.shapiro(sample)
+    print(f"Group {group}: W-statistic={stat:.3}, p-value={p_value:.2e}")
 
-# Extract residuals
-residuals = gee_model.resid
+# Levene's Test for Homogeneity of Variances
+w, p_value = stats.levene(*[longAll[longAll['group_II'] == group]['Age_II'] for group in sorted(longAll['group_II'].unique())])
+print(f"\nLevene's Test (Age): W-statistic={w:.3}, p-value={p_value:.2e}")
 
-# Plot Q-Q plot
-stats.probplot(residuals, dist="norm", plot=plt)
-plt.title('Q-Q Plot of GEE Residuals')
-plt.show()
+# Extract unique groups
+groups = longAll['group_II'].unique()
 
-# Plot residuals vs. fitted values
-plt.scatter(gee_model.fittedvalues, residuals)
-plt.xlabel('Fitted values')
-plt.ylabel('Residuals')
-plt.title('GEE Residuals vs Fitted Values')
-plt.show()
+# Prepare age data for each group
+age_data = [longAll[longAll['group_II'] == group]['Age_II'].values for group in groups]
 
-# Shapiro-Wilk test for residuals
-stat, p_value = stats.shapiro(residuals)
-print(f"Shapiro-Wilk Test: W-statistic={stat:.4f}, p-value={p_value:.4f}")
-if p_value < 0.05:
-    print("Residuals are not normally distributed (reject H0).")
-else:
-    print("Residuals are normally distributed (fail to reject H0).")
+# Perform Kruskal-Wallis H Test
+statistic, p_value = kruskal(*age_data)
 
-# Levene's test for homogeneity of variances
-fitted_value_groups = pd.qcut(gee_model.fittedvalues, q=4)
-stat, p_value = stats.levene(*[residuals[fitted_value_groups == group]
-                               for group in fitted_value_groups.unique()])
-print(f"Levene's Test: W-statistic={stat:.4f}, p-value={p_value:.4f}")
-if p_value < 0.05:
-    print("Residual variances are significantly different (reject H0).")
-else:
-    print("Residual variances are equal (fail to reject H0).")
+print(f"\nKruskal-Wallis H Test Statistic (Age): {statistic:.3}")
+print(f"P-Value: {p_value:.2e}")
 
-print('===== Permutation test CAT =====')
+# Contingency table (replace with actual counts)
+data = np.array([[40, 21], [10, 8], [15, 7], [9, 3]])
 
-data_permu = timepoint_I['brainPAD_standardized'].values - timepoint_II['brainPAD_standardized'].values
-longi_todos['Delta'] = data_permu
-longi_todos['Edad_dif'] = longi_todos['Edad_II'] - longi_todos['Edad_I']
-longi_todos['grupo_cat'] = timepoint_I['grupo_cat'].map({'Enfermos': 1, 'Controles': 0})
+# Chi-square test
+chi2, p, dof, expected = chi2_contingency(data)
+
+print(f"\nChi-square statistic (Sex): {chi2:.3}")
+print(f"p-value: {p:.2e}")
+
+print('===== Permutation test =====')
 
 # Merge the DataFrames on 'ID'
 n_permutations = 5000
-formula = 'Delta ~ grupo_cat + n_euler + Edad_dif'
+formula = 'DeltaBrainPAD ~ pliks18TH_x + n_euler + Age_dif'
 
 # Coefficients of interest
-covariates = ['grupo_cat', 'n_euler', 'Edad_dif']
+covariates = ['pliks18TH_x', 'n_euler', 'Age_dif']
 
 # Step 1: Fit GLM on the original data to get observed coefficients
-observed_coefs = fit_glm_and_get_all_coef(longi_todos, formula)
+observed_coefs = fit_glm_and_get_all_coef(longAll, formula)
 
 # Step 2: Initialize a dictionary to store permutation coefficients for each covariate
 perm_coefs = {covariate: [] for covariate in covariates}
 
 # Create a copy of the DataFrame for permutations
-df_perm = longi_todos.copy()
+df_perm = longAll.copy()
 
 # Step 3: Perform permutations
 for _ in range(n_permutations):
     # Permute the dependent variable
-    df_perm['Delta'] = np.random.permutation(longi_todos['Delta'])
-
-    # Get the permuted coefficients for all covariates
-    permuted_coefs = fit_glm_and_get_all_coef(df_perm, formula)
-
-    # Store the permuted coefficients for each covariate
-    for covariate in covariates:
-        perm_coefs[covariate].append(permuted_coefs[covariate])
-
-# Convert the permutation coefficients to numpy arrays
-perm_coefs = {covariate: np.array(coefs) for covariate, coefs in perm_coefs.items()}
-
-# Step 4: Calculate p-values for each covariate
-p_values = {}
-for covariate in covariates:
-    observed_coef = observed_coefs[covariate]
-    permuted_coef_distribution = perm_coefs[covariate]
-
-    # Calculate p-value by comparing the observed coefficient to the permuted distribution
-    p_value = np.mean(np.abs(permuted_coef_distribution) >= np.abs(observed_coef))
-    p_values[covariate] = p_value
-
-    # Print the observed coefficient and the p-value for each covariate
-    print(f"Coeficiente observado cat  ({covariate}): {observed_coef}")
-    print(f"p-valor de la prueba de permutación cat ({covariate}): {p_value}")
-
-
-print('===== Permutation test trend =====')
-
-# Merge the DataFrames on 'ID'
-n_permutations = 5000
-formula = 'DeltaBrainPAD ~ pliks18TH_I + n_euler + Edad_dif'
-
-# Coefficients of interest
-covariates = ['pliks18TH_I', 'n_euler', 'Edad_dif']
-
-# Step 1: Fit GLM on the original data to get observed coefficients
-observed_coefs = fit_glm_and_get_all_coef(longi_todos, formula)
-
-# Step 2: Initialize a dictionary to store permutation coefficients for each covariate
-perm_coefs = {covariate: [] for covariate in covariates}
-
-# Create a copy of the DataFrame for permutations
-df_perm = longi_todos.copy()
-
-# Step 3: Perform permutations
-for _ in range(n_permutations):
-    # Permute the dependent variable
-    df_perm['DeltaBrainPAD'] = np.random.permutation(longi_todos['DeltaBrainPAD'])
+    df_perm['DeltaBrainPAD'] = np.random.permutation(longAll['DeltaBrainPAD'])
 
     # Get the permuted coefficients for all covariates
     permuted_coefs = fit_glm_and_get_all_coef(df_perm, formula)
@@ -445,8 +314,8 @@ for covariate in covariates:
     print(f"Coeficiente observado ({covariate}): {observed_coef}")
     print(f"p-valor de la prueba de permutación ({covariate}): {p_value}")
 
+# ============ 9) Plotting ============
 
-from utils_Train import rain_cloud_plot_VI, rain_cloud_plot_VII, rain_cloud_plot_VIII
-
-rain_cloud_plot_VI(longi_todos)
-rain_cloud_plot_VIII(longi_todos)
+# Custom Rain Cloud plots
+rain_cloud_plot_VI(longAll)
+rain_cloud_plot_VIII(longAll)

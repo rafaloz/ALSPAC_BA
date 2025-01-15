@@ -1,7 +1,7 @@
 import warnings
 warnings.filterwarnings("ignore")
 
-from utils_Train import *
+from utils import *
 
 from sklearn.metrics import mean_absolute_error, r2_score
 from scipy.stats import pearsonr
@@ -12,7 +12,7 @@ X_Cardiff = '/home/rafa/PycharmProjects/ALSPAC_BA/Data/ALSPAC_PE_II.csv'
 
 # Obtain predictions from ALSPAC data
 ALSPAC_results = pd.read_csv(X_Cardiff)
-results_Cardiff = model_evaluation_modified(X_test, ALSPAC_results)
+results_Cardiff = model_evaluation(X_test, ALSPAC_results)
 pliks_info = ALSPAC_results[['ID', 'pliks18TH']]
 
 # Explicitly copy each slice to ensure they are independent DataFrames

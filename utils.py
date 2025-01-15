@@ -26,81 +26,6 @@ import numpy as np
 import pickle
 import os
 
-def split_5_fold_train_test(datos, fold):
-    # Assure datos are randomized by rows before entering here
-    datos_list = np.array_split(datos, 5)
-
-    datos_test = datos_list[fold]
-    # Combine the remaining parts for training data
-    remaining_indices = [i for i in range(5) if i != fold]
-    datos_train = pd.concat([datos_list[i] for i in remaining_indices], axis=0)
-
-    print('[INFO] Shape de los datos de entrenamiento: ' + str(datos_train.shape))
-    print('[INFO] Shape de los datos de prueba: ' + str(datos_test.shape))
-
-    return datos_train, datos_test
-
-def check_split(datos_list, datos_validation, datos_test):
-
-    va_test_check = not(datos_test.equals(datos_validation))
-    check_val_train, check_test_train = [], []
-    for dataframe in datos_list[2:10]:
-        check_val_train.append(not(dataframe.equals(datos_validation)))
-        check_test_train.append(not(dataframe.equals(datos_test)))
-
-    return va_test_check and all(check_val_train) and all(check_test_train)
-
-def split_8_1_1(datos, fold):
-
-    # divido los datos en bloques de 10; estńa randomizados por filas antes de entrar aqui
-    datos_list = np.array_split(datos, 10)
-
-    datos_test = datos_list[fold]
-    if fold == 0:
-        datos_validation = datos_list[fold+1]
-        datos_list_check = datos_list[2:10]
-        datos_train = pd.concat(datos_list_check, axis=0)
-        if check_split(datos_list_check, datos_validation, datos_test):
-             print('[INFO] datos correctamente dividos')
-        else:
-            print('[INFO] Comprobar división de los datos')
-    elif fold == 1:
-        datos_validation = datos_list[fold+1]
-        datos_list_check = datos_list[fold+2:10]+[datos_list[fold-1]]
-        datos_train = pd.concat(datos_list_check, axis=0)
-        if check_split(datos_list_check, datos_validation, datos_test):
-             print('[INFO] datos correctamente dividos')
-        else:
-            print('[INFO] Comprobar división de los datos')
-    elif fold == 8:
-        datos_validation = datos_list[fold+1]
-        datos_list_check = datos_list[0:8]
-        datos_train = pd.concat(datos_list_check, axis=0)
-        if check_split(datos_list_check, datos_validation, datos_test):
-             print('[INFO] datos correctamente dividos')
-        else:
-            print('[INFO] Comprobar división de los datos')
-    elif fold == 9:
-        datos_validation = datos_list[0]
-        datos_list_check = datos_list[1:9]
-        datos_train = pd.concat(datos_list_check, axis=0)
-        if check_split(datos_list_check, datos_validation, datos_test):
-             print('[INFO] datos correctamente dividos')
-        else:
-            print('[INFO] Comprobar división de los datos')
-    else:
-        datos_validation = datos_list[fold+1]
-        datos_list_check = datos_list[fold+2:10]+datos_list[0:fold]
-        datos_train = pd.concat(datos_list_check, axis=0)
-        if check_split(datos_list_check, datos_validation, datos_test):
-             print('[INFO] datos correctamente dividos')
-        else:
-            print('[INFO] Comprobar división de los datos')
-
-    print('[INFO] Shape de los datos de entrenamineto ' + str(datos_train.values.shape))
-
-    return datos_train, datos_validation, datos_test
-
 def outlier_flattening(datos_train, datos_test):
     datos_train_flat = datos_train.copy()
     datos_test_flat = datos_test.copy()
@@ -126,22 +51,6 @@ def normalize_data_min_max(datos_train, datos_test, range):
     #     pickle.dump(scaler, file)
 
     return datos_train, datos_test
-
-def standardize_data(datos_train, datos_test):
-    columns = datos_train.columns
-
-    # Initialize the StandardScaler
-    scaler = StandardScaler()
-
-    # Fit to the training data and transform both training and test data
-    datos_train_scaled = scaler.fit_transform(datos_train)
-    datos_test_scaled = scaler.transform(datos_test)
-
-    # Convert numpy arrays back to pandas DataFrames, retaining original column names and indices
-    datos_train_scaled = pd.DataFrame(datos_train_scaled, columns=columns)
-    datos_test_scaled = pd.DataFrame(datos_test_scaled, columns=columns)
-
-    return datos_train_scaled, datos_test_scaled
 
 def feature_selection(data_train, data_val, data_test, ages_train, n_features):
 
@@ -324,192 +233,9 @@ def execute_in_val_and_test_NN(data_train_filtered, edades_train, data_val_filte
 
     return MAEs_and_rs_test
 
-def fit_glm_and_get_coef(data, formula, coef_name):
-    model = glm(formula=formula, data=data, family=sm.families.Gaussian()).fit()
-    return model.params[coef_name]
-
 def fit_glm_and_get_all_coef(data, formula):
     model = glm(formula=formula, data=data, family=sm.families.Gaussian()).fit()
     return model.params
-
-def perform_tests(group0, group1):
-    stat, p_value = ttest_ind(group0, group1)
-    return stat
-
-def rain_cloud_plot(df_prev_copy):
-    import matplotlib.pyplot as plt
-    import seaborn as sns
-    import pandas as pd
-    import numpy as np
-    from collections import OrderedDict
-
-    # Function to convert HEX to RGB
-    def hex_to_rgb(hex_color):
-        hex_color = hex_color.lstrip('#')
-        return tuple(int(hex_color[i:i + 2], 16) / 255.0 for i in (0, 2, 4))
-
-    # Function to convert RGB to HEX
-    def rgb_to_hex(rgb_color):
-        return "#{:02x}{:02x}{:02x}".format(int(rgb_color[0] * 255), int(rgb_color[1] * 255), int(rgb_color[2] * 255))
-
-    # Function to interpolate between two colors
-    def interpolate_colors(start_color, end_color, n):
-        start_color = np.array(start_color)
-        end_color = np.array(end_color)
-        colors = [start_color + (end_color - start_color) * t for t in np.linspace(0, 1, n)]
-        hex_colors = [rgb_to_hex(color) for color in colors]
-        return hex_colors
-
-    # Copy and modify the data
-    df = df_prev_copy.copy()
-    df['Group'] = df['Group'].replace('Crazy', 'PE_1-3')
-
-    # Prepare the data for the raincloud plot
-    x_values = OrderedDict()
-    groups = df['Group'].unique()
-
-    for group in groups:
-        x_values[group] = df[df['Group'] == group]['BrainPAD'].values
-
-    vals, names, xs = [], [], []
-    for i, item in enumerate(x_values):
-        vals.append(x_values[item])
-        names.append(item)
-        xs.append(np.random.normal(i, 0.03, x_values[item].shape[0]))
-
-    # Define the colors and palette (can be customized)
-    start_blue_colors = '#91bec8'
-    end_blue_colors = '#0e4e6e'
-
-    # Generate gradient colors for different groups
-    start_color_rgb = hex_to_rgb(start_blue_colors)
-    end_color_rgb = hex_to_rgb(end_blue_colors)
-    palette_1 = interpolate_colors(start_color_rgb, end_color_rgb, len(groups))
-
-    start_blue_colors = '#6fa4b7'
-    end_blue_colors = '#146e9b'
-    palette_2 = interpolate_colors(hex_to_rgb(start_blue_colors), hex_to_rgb(end_blue_colors), len(groups))
-
-    # Create the figure and axes
-    fig, ax = plt.subplots(figsize=(10, 6))
-
-    # Violin plot with axes swapped
-    violins = sns.violinplot(data=df, y='BrainPAD', x='Group', hue='Group', palette=palette_2, ax=ax, fill=False,
-                             inner_kws=dict(  # Custom settings for the inner boxplot
-                                 box_width=0.2,  # Custom width for the inner boxplot
-                                 whis_width=2,  # Custom whisker width
-                                 color="black",  # Custom color for the inner boxplot and whiskers
-                             ),
-                             legend=False)
-
-    # Apply alpha to the violin plot elements
-    for violin in violins.collections:
-        violin.set_alpha(0.3)
-
-
-    # Scatter plot on top of the violin plot with axes swapped
-    for x, val, c in zip(xs, vals, palette_1):
-        plt.scatter(x, val, alpha=0.4, color=c, edgecolor=c, zorder=1)
-
-    # Customizing plot
-    plt.ylabel('BrainPAD', fontweight='bold')
-    plt.xlabel('Group', fontweight='bold')
-    plt.title('Raincloud Plot with Violin for BrainPAD by Group (Axes Switched)', fontweight='bold')
-
-    plt.show()
-
-def rain_cloud_plot_II(df_prev_copy):
-    import matplotlib.pyplot as plt
-    import seaborn as sns
-    import pandas as pd
-    import numpy as np
-    from collections import OrderedDict
-
-    # Function to convert HEX to RGB
-    def hex_to_rgb(hex_color):
-        hex_color = hex_color.lstrip('#')
-        return tuple(int(hex_color[i:i + 2], 16) / 255.0 for i in (0, 2, 4))
-
-    # Function to convert RGB to HEX
-    def rgb_to_hex(rgb_color):
-        return "#{:02x}{:02x}{:02x}".format(int(rgb_color[0] * 255), int(rgb_color[1] * 255), int(rgb_color[2] * 255))
-
-    # Function to interpolate between two colors
-    def interpolate_colors(start_color, end_color, n):
-        start_color = np.array(start_color)
-        end_color = np.array(end_color)
-        colors = [start_color + (end_color - start_color) * t for t in np.linspace(0, 1, n)]
-        hex_colors = [rgb_to_hex(color) for color in colors]
-        return hex_colors
-
-    # Copy and modify the data
-    df = df_prev_copy.copy()
-    df['Group'] = df['Group'].replace('Crazy', 'PE_1-3')
-
-    # Prepare the data for the raincloud plot
-    x_values = OrderedDict()
-    groups = df['Group'].unique()
-
-    for group in groups:
-        x_values[group] = df[df['Group'] == group]['BrainPAD'].values
-
-    vals, names, xs = [], [], []
-    for i, item in enumerate(x_values):
-        vals.append(x_values[item])
-        names.append(item)
-        xs.append(np.random.normal(i, 0.03, x_values[item].shape[0]))
-
-    # Define the colors and palette (can be customized)
-    start_blue_colors = '#91bec8'
-    end_blue_colors = '#0e4e6e'
-
-    # Generate gradient colors for different groups
-    start_color_rgb = hex_to_rgb(start_blue_colors)
-    end_color_rgb = hex_to_rgb(end_blue_colors)
-    palette_1 = interpolate_colors(start_color_rgb, end_color_rgb, len(groups))
-
-    start_blue_colors = '#6fa4b7'
-    end_blue_colors = '#146e9b'
-    palette_2 = interpolate_colors(hex_to_rgb(start_blue_colors), hex_to_rgb(end_blue_colors), len(groups))
-
-    # Copy and modify the data
-    df = df_prev_copy.copy()
-    df['Group'] = df['Group'].replace('Crazy', 'PE_1-3')
-
-    # Create the figure and axes
-    fig, ax = plt.subplots(figsize=(10, 6))
-
-    # Violin plot with no inner fill but outlined box
-    sns.violinplot(
-        data=df,
-        x='BrainPAD',
-        y='Group',
-        inner=None,  # No inner plots as we will overlay the boxplot
-        palette=palette_2,  # Color palette for violins
-        linewidth=1.5,  # Line width for the violin outline
-        ax=ax
-    )
-
-    # Overlay a boxplot with only the outline and no fill (facecolor='none')
-    sns.boxplot(
-        data=df,
-        x='BrainPAD',
-        y='Group',
-        width=0.2,  # Narrower box width
-        boxprops=dict(facecolor='none', edgecolor=palette_2, linewidth=1),  # Only outline for the box, no fill
-        whiskerprops=dict(linewidth=1),  # Thicker whiskers
-        capprops=dict(linewidth=1),  # Thicker caps
-        medianprops=dict(linewidth=1, color=palette_2),  # Thicker median line
-        showfliers=False,  # Optional: Hide outliers
-        ax=ax
-    )
-
-    # Customizing plot
-    plt.ylabel('Group', fontweight='bold')
-    plt.xlabel('BrainPAD', fontweight='bold')
-    plt.title('Violin Plot with Outline Boxplot for BrainPAD by Group', fontweight='bold')
-
-    plt.show()
 
 def rain_cloud_plot_III(df_prev_copy):
     import matplotlib
@@ -641,23 +367,6 @@ def rain_cloud_plot_III(df_prev_copy):
 
     plt.show()
 
-def generate_generic_data():
-    np.random.seed(42)  # Set seed for reproducibility
-    n = 100  # Number of samples per group
-    groups = ['Group 1', 'Group 2', 'Group 3', 'Group 4']
-
-    data = {
-        'Group': np.repeat(groups, n),
-        'BrainPAD': np.concatenate([
-            np.random.normal(0, 1, n),  # Group 1
-            np.random.normal(1, 1, n),  # Group 2
-            np.random.normal(2, 1, n),  # Group 3
-            np.random.normal(3, 1, n)  # Group 4
-        ])
-    }
-
-    return pd.DataFrame(data)
-
 def rain_cloud_plot_V(df):
 
     # Function to convert HEX to RGB
@@ -767,136 +476,6 @@ def rain_cloud_plot_V(df):
 
     plt.show()
 
-def rain_cloud_plot_IV(df_prev_copy):
-    import matplotlib.pyplot as plt
-    import seaborn as sns
-    import pandas as pd
-    import numpy as np
-    from collections import OrderedDict
-
-    # Function to convert HEX to RGB
-    def hex_to_rgb(hex_color):
-        hex_color = hex_color.lstrip('#')
-        return tuple(int(hex_color[i:i + 2], 16) / 255.0 for i in (0, 2, 4))
-
-    # Function to convert RGB to HEX
-    def rgb_to_hex(rgb_color):
-        return "#{:02x}{:02x}{:02x}".format(int(rgb_color[0] * 255), int(rgb_color[1] * 255), int(rgb_color[2] * 255))
-
-    # Function to interpolate between two colors
-    def interpolate_colors(start_color, end_color, n):
-        start_color = np.array(start_color)
-        end_color = np.array(end_color)
-        colors = [start_color + (end_color - start_color) * t for t in np.linspace(0, 1, n)]
-        hex_colors = [rgb_to_hex(color) for color in colors]
-        return hex_colors
-
-    df = df_prev_copy
-
-    # Prepare the data for the raincloud plot
-    x_values = OrderedDict()
-    groups = df['grupo'].unique()
-
-    for group in groups:
-        x_values[group] = df[df['grupo'] == group]['Delta_BAG_standardized'].values
-
-    vals, names, xs = [], [], []
-    for i, item in enumerate(x_values):
-        vals.append(x_values[item])
-        names.append(item)
-        xs.append(np.random.normal(i, 0.03, x_values[item].shape[0]))
-
-    # Define the colors and palette (can be customized)
-    grey_colors_light = '#B4BBBB'
-    gray_colors_dark = '#858E8D'
-    blue_colors_light = '#D8BFD8'
-    blue_colors_dark = '#7E6A9C'
-    red_colors_light = '#BF6673'
-    red_colors_dark = '#C42840'
-    orange_colors_light = '#A3B583'
-    orange_colors_dark = '#556B2F'
-
-    # Generate gradient colors for different groups
-    palette_1 = interpolate_colors(hex_to_rgb(blue_colors_light), hex_to_rgb(orange_colors_light), len(groups))
-
-    # Copy and modify the data
-    df = df_prev_copy.copy()
-    df['grupo'] = df['grupo'].replace('Crazy', 'PE_1-3')
-
-    # Create the figure and axes
-    fig, ax = plt.subplots(figsize=(10, 6))
-
-    # Violin plot with no fill and switched axes (Group on x-axis, BrainPAD on y-axis)
-    sns.violinplot(
-        data=df,
-        x='grupo',
-        y='Delta_BAG_standardized',
-        palette=[blue_colors_dark, orange_colors_dark],  # Color palette for violin outlines
-        linewidth=3.5,  # Line width for the violin outline
-        fill=False,
-        ax=ax,
-        inner=None
-    )
-
-    # Overlay a boxplot with only the outline and no fill (facecolor='none')
-    for i, group in enumerate(groups):
-        sns.boxplot(
-            data=df[df['grupo'] == group],
-            x='grupo',
-            y='Delta_BAG_standardized',
-            width=0.5,  # Narrower box width
-            boxprops=dict(facecolor='none', edgecolor=palette_1[i], linewidth=2),  # Outline for each box with its own color
-            whiskerprops=dict(linewidth=2, color=palette_1[i]),  # Thicker whiskers with corresponding color
-            capprops=dict(linewidth=2, color=palette_1[i]),  # Thicker caps with corresponding color
-            medianprops=dict(linewidth=2, color=palette_1[i]),  # Thicker median line with corresponding color
-            showfliers=False,  # Optional: Hide outliers
-            ax=ax
-        )
-
-    # Scatter plot to match the violin outline colors
-    sns.stripplot(
-        data=df,
-        x='grupo',
-        y='Delta_BAG_standardized',
-        jitter=True,  # Add some jitter to the points
-        size=7,  # Control point size
-        palette=[blue_colors_light, orange_colors_light],  # Match scatter point color to the violin outline
-        alpha=0.4,
-        linewidth=0,  # Line width for scatter point edges
-        ax=ax
-    )
-
-    # Adding black points and labels for the mean for each group
-    for i, group in enumerate(groups):
-        group_mean = df[df['grupo'] == group]['Delta_BAG_standardized'].mean()
-
-        # Add black point at the mean position
-        ax.scatter(
-            i,  # Position on the x-axis
-            group_mean,  # Position on the y-axis (mean value)
-            color='black',  # Black color for the point
-            s=70,  # Size of the point
-            zorder=3  # Ensure it appears on top of other elements
-        )
-
-        # Add text label for the mean with a box around it
-        ax.text(
-            i,  # Position on the x-axis
-            group_mean + 0.1,  # Position on the y-axis (mean + small offset)
-            f'Mean: {group_mean:.2f}',  # Text label showing the mean
-            horizontalalignment='center',
-            size='small',
-            color='black',
-            bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=0.3')  # Add a box around the text
-        )
-
-    # Customizing plot
-    plt.xlabel('grupo', fontweight='bold')
-    plt.ylabel('Delta_BAG_standardized', fontweight='bold')
-    plt.title('Violin Plot', fontweight='bold')
-
-    plt.show()
-
 def rain_cloud_plot_VI(df_prev_copy):
     import matplotlib.pyplot as plt
     import seaborn as sns
@@ -922,15 +501,15 @@ def rain_cloud_plot_VI(df_prev_copy):
         return hex_colors
 
     df = df_prev_copy
-    df['grupo_cat'] = df['grupo_cat'].replace('Enfermos', 'PEs')
-    df['grupo_cat'] = df['grupo_cat'].replace('Controles', 'Controls')
+    df['group_cat'] = df['group_cat'].replace('Enfermos', 'PEs')
+    df['group_cat'] = df['group_cat'].replace('Controles', 'Controls')
 
     # Prepare the data for the raincloud plot
     x_values = OrderedDict()
-    groups = df['grupo_cat'].unique()
+    groups = df['group_cat'].unique()
 
     for group in groups:
-        x_values[group] = df[df['grupo_cat'] == group]['DeltaBrainPAD'].values
+        x_values[group] = df[df['group_cat'] == group]['DeltaBrainPAD'].values
 
     vals, names, xs = [], [], []
     for i, item in enumerate(x_values):
@@ -953,7 +532,7 @@ def rain_cloud_plot_VI(df_prev_copy):
     # Violin plot with no fill and switched axes (Group on x-axis, BrainPAD on y-axis)
     sns.violinplot(
         data=df,
-        x='grupo_cat',
+        x='group_cat',
         y='DeltaBrainPAD',
         palette=[purple_colors_dark, green_colors_dark],  # Color palette for violin outlines
         linewidth=3.5,  # Line width for the violin outline
@@ -965,8 +544,8 @@ def rain_cloud_plot_VI(df_prev_copy):
     # Overlay a boxplot with only the outline and no fill (facecolor='none')
     for i, group in enumerate(groups):
         sns.boxplot(
-            data=df[df['grupo_cat'] == group],
-            x='grupo_cat',
+            data=df[df['group_cat'] == group],
+            x='group_cat',
             y='DeltaBrainPAD',
             width=0.5,  # Narrower box width
             boxprops=dict(facecolor='none', edgecolor=palette_1[i], linewidth=2),  # Outline for each box with its own color
@@ -980,7 +559,7 @@ def rain_cloud_plot_VI(df_prev_copy):
     # Scatter plot to match the violin outline colors
     sns.stripplot(
         data=df,
-        x='grupo_cat',
+        x='group_cat',
         y='DeltaBrainPAD',
         jitter=True,  # Add some jitter to the points
         size=7,  # Control point size
@@ -992,7 +571,7 @@ def rain_cloud_plot_VI(df_prev_copy):
 
     # Adding black points and labels for the mean for each group
     for i, group in enumerate(groups):
-        group_mean = df[df['grupo_cat'] == group]['DeltaBrainPAD'].mean()
+        group_mean = df[df['group_cat'] == group]['DeltaBrainPAD'].mean()
 
         # Add black point at the mean position
         ax.scatter(
@@ -1015,7 +594,7 @@ def rain_cloud_plot_VI(df_prev_copy):
         )
 
     # Customizing plot
-    plt.xlabel('grupo_cat', fontweight='bold')
+    plt.xlabel('group_cat', fontweight='bold')
     plt.ylabel('DeltaBrainPAD', fontweight='bold')
     plt.title('Violin Plot', fontweight='bold')
 
@@ -1054,7 +633,7 @@ def rain_cloud_plot_VIII(df):
     # Violin plot with no fill and switched axes (pliks18TH on x-axis, BrainPAD on y-axis)
     sns.violinplot(
         data=df,
-        x='Grupo_ordinal',
+        x='pliks18TH_x',
         y='DeltaBrainPAD',
         palette= [purple_colors_dark] + ['#67C477'] + ['#3E9E31', '#228B22'],  # Color palette for violin outlines
         linewidth=2.5,  # Line width for the violin outline
@@ -1066,10 +645,10 @@ def rain_cloud_plot_VIII(df):
     palette_1 =[purple_colors_light] + ['#A6E6A1'] + ['#7AC96B', '#4CA743']
 
     # Overlay a boxplot with only the outline and no fill (facecolor='none')
-    for i, group in enumerate(sorted(df['Grupo_ordinal'].unique())):
+    for i, group in enumerate(sorted(df['pliks18TH_x'].unique())):
         sns.boxplot(
-            data=df[df['Grupo_ordinal'] == group],
-            x='Grupo_ordinal',
+            data=df[df['pliks18TH_x'] == group],
+            x='pliks18TH_x',
             y='DeltaBrainPAD',
             width=0.5,  # Narrower box width
             boxprops=dict(facecolor='none', edgecolor=palette_1[i], linewidth=2),  # Outline for each box with its own color
@@ -1083,7 +662,7 @@ def rain_cloud_plot_VIII(df):
     # Scatter plot to match the violin outline colors
     sns.stripplot(
         data=df,
-        x='Grupo_ordinal',
+        x='pliks18TH_x',
         y='DeltaBrainPAD',
         jitter=True,  # Add some jitter to the points
         size=7,  # Control point size
@@ -1094,8 +673,8 @@ def rain_cloud_plot_VIII(df):
     )
 
     # Adding black points and labels for the mean for each group
-    for i, group in enumerate(sorted(df['Grupo_ordinal'].unique())):
-        group_mean = df[df['Grupo_ordinal'] == group]['DeltaBrainPAD'].mean()
+    for i, group in enumerate(sorted(df['pliks18TH_x'].unique())):
+        group_mean = df[df['pliks18TH_x'] == group]['DeltaBrainPAD'].mean()
 
         # Add black point at the mean position
         ax.scatter(
@@ -1118,7 +697,7 @@ def rain_cloud_plot_VIII(df):
         )
 
     # Customizing plot
-    plt.xlabel('Grupo_ordinal', fontweight='bold')
+    plt.xlabel('pliks18TH_x', fontweight='bold')
     plt.ylabel('DeltaBrainPAD', fontweight='bold')
     plt.title('Violin Plot for brainPAD_standardized by grupo', fontweight='bold')
 
@@ -1157,7 +736,7 @@ def rain_cloud_plot_VII(df):
     # Violin plot with no fill and switched axes (pliks18TH on x-axis, BrainPAD on y-axis)
     sns.violinplot(
         data=df,
-        x='Grupo_ordinal',
+        x='group_ordinal',
         y='DeltaBrainPAD',
         palette= ['#67C477'] + [purple_colors_dark] + ['#3E9E31', '#228B22'],  # Color palette for violin outlines
         linewidth=2.5,  # Line width for the violin outline
@@ -1169,10 +748,10 @@ def rain_cloud_plot_VII(df):
     palette_1 = ['#A6E6A1'] + [purple_colors_light] + ['#7AC96B', '#4CA743']
 
     # Overlay a boxplot with only the outline and no fill (facecolor='none')
-    for i, group in enumerate(sorted(df['Grupo_ordinal'].unique())):
+    for i, group in enumerate(sorted(df['group_ordinal'].unique())):
         sns.boxplot(
-            data=df[df['Grupo_ordinal'] == group],
-            x='Grupo_ordinal',
+            data=df[df['group_ordinal'] == group],
+            x='group_ordinal',
             y='DeltaBrainPAD',
             width=0.5,  # Narrower box width
             boxprops=dict(facecolor='none', edgecolor=palette_1[i], linewidth=2),  # Outline for each box with its own color
@@ -1186,7 +765,7 @@ def rain_cloud_plot_VII(df):
     # Scatter plot to match the violin outline colors
     sns.stripplot(
         data=df,
-        x='Grupo_ordinal',
+        x='group_ordinal',
         y='DeltaBrainPAD',
         jitter=True,  # Add some jitter to the points
         size=7,  # Control point size
@@ -1197,8 +776,8 @@ def rain_cloud_plot_VII(df):
     )
 
     # Adding black points and labels for the mean for each group
-    for i, group in enumerate(sorted(df['Grupo_ordinal'].unique())):
-        group_mean = df[df['Grupo_ordinal'] == group]['DeltaBrainPAD'].mean()
+    for i, group in enumerate(sorted(df['group_ordinal'].unique())):
+        group_mean = df[df['group_ordinal'] == group]['DeltaBrainPAD'].mean()
 
         # Add black point at the mean position
         ax.scatter(
@@ -1221,131 +800,8 @@ def rain_cloud_plot_VII(df):
         )
 
     # Customizing plot
-    plt.xlabel('Grupo_ordinal', fontweight='bold')
+    plt.xlabel('group_ordinal', fontweight='bold')
     plt.ylabel('DeltaBrainPAD', fontweight='bold')
-    plt.title('Violin Plot for brainPAD_standardized by grupo', fontweight='bold')
-
-    plt.show()
-
-def rain_cloud_plot_colors(df):
-    import numpy as np
-    import seaborn as sns
-    import matplotlib.pyplot as plt
-
-    # Function to convert HEX to RGB
-    def hex_to_rgb(hex_color):
-        hex_color = hex_color.lstrip('#')
-        return tuple(int(hex_color[i:i + 2], 16) / 255.0 for i in (0, 2, 4))
-
-    # Function to convert RGB to HEX
-    def rgb_to_hex(rgb_color):
-        return "#{:02x}{:02x}{:02x}".format(int(rgb_color[0] * 255), int(rgb_color[1] * 255), int(rgb_color[2] * 255))
-
-    # Define colors for the groups
-    grey_colors_light = '#B4BBBB'
-    gray_colors_dark = '#858E8D'
-
-    blue_colors_light = '#70B7CE'
-    blue_colors_dark = '#348AA7'
-
-    # Create the figure and axes
-    fig, ax = plt.subplots(figsize=(12, 8))
-
-    # Color palettes for the groups
-    palette_red_light = ['#CE9AA3', '#D07986', '#DC576B']
-    palette_red_dark = ['#B67781', '#B65362', '#B52F43']
-
-    palette_orange_light = ['#E2A98C', '#EC9468', '#F17D47']
-    palette_orange_dark = ['#CC8E79', '#DA7949', '#DC5614']
-
-    # Violin plot with no fill and switched axes (pliks18TH on x-axis, BrainPAD on y-axis)
-    sns.violinplot(
-        data=df,
-        x='pliks18TH',
-        y='brainPAD_standardized',
-        palette=[gray_colors_dark] + palette_red_dark,  # Color palette for violin outlines
-        linewidth=2.5,  # Line width for the violin outline
-        fill=False,
-        ax=ax,
-        inner=None
-    )
-
-    palette_1 = [grey_colors_light] + palette_red_light
-
-    # Overlay a boxplot with only the outline and no fill (facecolor='none')
-    for i, group in enumerate(df['pliks18TH'].unique()):
-        sns.boxplot(
-            data=df[df['pliks18TH'] == group],
-            x='pliks18TH',
-            y='brainPAD_standardized',
-            width=0.5,  # Narrower box width
-            boxprops=dict(facecolor='none', edgecolor=palette_1[i], linewidth=2),  # Outline for each box with its own color
-            whiskerprops=dict(linewidth=2, color=palette_1[i]),  # Thicker whiskers with corresponding color
-            capprops=dict(linewidth=2, color=palette_1[i]),  # Thicker caps with corresponding color
-            medianprops=dict(linewidth=2, color=palette_1[i]),  # Thicker median line with corresponding color
-            showfliers=False,  # Optional: Hide outliers
-            ax=ax
-        )
-
-    # Scatter plot to match the violin outline colors
-    # Determine the last group and top 10 highest brainPAD_standardized
-    last_group = df['pliks18TH'].unique()[-1]
-    last_group_top_7 = df[df['pliks18TH'] == last_group].nlargest(7, 'brainPAD_standardized')
-
-    sns.stripplot(
-        data=df,
-        x='pliks18TH',
-        y='brainPAD_standardized',
-        jitter=True,  # Add some jitter to the points
-        size=7,  # Control point size
-        palette=palette_1,  # Match scatter point color to the violin outline
-        alpha=0.4,
-        linewidth=0,  # Line width for scatter point edges
-        ax=ax
-    )
-
-    for ID in last_group_top_7['ID'].values.tolist():
-        print(ID)
-
-    print(last_group_top_7)
-
-    # Highlight top 10 IDs in blue for the last group
-    ax.scatter(
-        [last_group] * len(last_group_top_7),  # Position on the x-axis for the last group
-        last_group_top_7['brainPAD_standardized'],  # Position on the y-axis
-        color=blue_colors_dark,  # Blue color for the top 10 points
-        s=70,  # Size of the points
-        zorder=3, # Ensure it appears on top of other elements
-        alpha=0.4
-    )
-
-    # Adding black points and labels for the mean for each group
-    for i, group in enumerate(df['pliks18TH'].unique()):
-        group_mean = df[df['pliks18TH'] == group]['brainPAD_standardized'].mean()
-
-        # Add black point at the mean position
-        ax.scatter(
-            i,  # Position on the x-axis
-            group_mean,  # Position on the y-axis (mean value)
-            color='black',  # Black color for the point
-            s=70,  # Size of the point
-            zorder=3  # Ensure it appears on top of other elements
-        )
-
-        # Add text label for the mean with a box around it
-        ax.text(
-            i,  # Position on the x-axis
-            group_mean + 0.1,  # Position on the y-axis (mean + small offset)
-            f'Mean: {group_mean:.2f}',  # Text label showing the mean
-            horizontalalignment='center',
-            size='small',
-            color='black',
-            bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=0.3')  # Add a box around the text
-        )
-
-    # Customizing plot
-    plt.xlabel('pliks18TH', fontweight='bold')
-    plt.ylabel('brainPAD_standardized', fontweight='bold')
     plt.title('Violin Plot for brainPAD_standardized by group', fontweight='bold')
 
     plt.show()
@@ -1356,14 +812,6 @@ def calculate_cohen_d(group1, group2):
     n1, n2 = len(group1), len(group2)
     pooled_std = np.sqrt(((n1 - 1) * std1**2 + (n2 - 1) * std2**2) / (n1 + n2 - 2))
     return (mean2 - mean1) / pooled_std
-
-def remove_outliers(df, column):
-    Q1 = df[column].quantile(0.25)
-    Q3 = df[column].quantile(0.75)
-    IQR = Q3 - Q1
-    lower_bound = Q1 - 1.5 * IQR
-    upper_bound = Q3 + 1.5 * IQR
-    return df[(df[column] >= lower_bound) & (df[column] <= upper_bound)]
 
 def age_vs_predicted_age_figure(edades_test, pred_test):
 
@@ -1397,7 +845,7 @@ def age_vs_predicted_age_figure(edades_test, pred_test):
 
     plt.show()
 
-def model_evaluation_modified(X_test, results):
+def model_evaluation(X_test, results):
 
     X_test_df = pd.read_csv(X_test)
 
@@ -1428,74 +876,6 @@ def model_evaluation_modified(X_test, results):
     results['eTIV'] = etiv
 
     return results
-
-def model_evaluation(X_train, X_test, results, features):
-    etiv = X_test['eTIV'].values.tolist()
-
-    edades_train = X_train['Edad'].values
-    edades_test = results['Edad'].values
-
-    X_train = X_train[features]
-    X_test = X_test[features]
-
-    # aplico la eliminación de outliers
-    X_train, X_test = outlier_flattening(X_train, X_test)
-
-    # 3.- normalizo los datos OJO LA NORMALIZACION QUE CON Z NORM O CON 0-1 PUEDE VARIAR EL RESULTADO BASTANTE!
-    X_train, X_test = normalize_data_min_max(X_train, X_test, (-1, 1))
-
-    X_train_df = pd.DataFrame(X_train)
-    X_train_df.columns = features
-    X_test_df = pd.DataFrame(X_test)
-    X_test_df.columns = features
-    X_test_df['Edad'] = edades_test
-    X_train_df['Edad'] = edades_train
-
-    X_test_df['eTIV'] = etiv
-
-    X_test_df.to_csv('data_test_ALSPAC_II.csv', index=False)
-
-    file_path = ('/home/rafa/PycharmProjects/Cardiff_ALSPAC/modelos/modelo_morfo_100_Cardiff_balanced_WAND/SimpleMLP_nfeats_100_fold_0.pkl')
-    with open(file_path, 'rb') as file:
-        regresor = pickle.load(file)
-
-    pred_test_median = regresor.predict(X_test)
-
-    # bias correction
-    df_bias_correction = pd.read_csv('/home/rafa/PycharmProjects/Cardiff_ALSPAC/modelos/modelo_morfo_100_Cardiff_balanced_WAND/DataFrame_bias_correction.csv')
-
-    model = LinearRegression()
-    model.fit(df_bias_correction[['edades_train']], df_bias_correction['pred_train'])
-
-    slope = model.coef_[0]
-    intercept = model.intercept_
-
-    results['pred_Edad_c'] = (pred_test_median - intercept) / slope
-    results['pred_Edad'] = pred_test_median
-    results['BrainPAD'] = results['pred_Edad_c'] - edades_test
-    results['eTIV'] = etiv
-
-    results.rename(columns={'sexo(M=1;F=0)': 'sexo'}, inplace=True)
-
-    return results
-
-def benjamini_hochberg_correction(p_values):
-    n = len(p_values)
-    sorted_p_values = np.array(sorted(p_values))
-    ranks = np.arange(1, n+1)
-
-    # Calculate the cumulative minimum of the adjusted p-values in reverse
-    adjusted_p_values = np.minimum.accumulate((sorted_p_values * n) / ranks)[::-1]
-
-    # Reverse back to original order
-    reverse_indices = np.argsort(p_values)
-    return adjusted_p_values[reverse_indices]
-
-def calculate_metrics(y_true, y_pred):
-    mae = mean_absolute_error(y_true, y_pred)
-    r, _ = pearsonr(y_true, y_pred)
-    r2 = r2_score(y_true, y_pred)
-    return mae, r, r2
 
 def standardize_with_control(control_df, target_df, gender_col, value_col, scaler_men, scaler_women):
     """
@@ -1530,4 +910,19 @@ def standardize_with_control(control_df, target_df, gender_col, value_col, scale
 
     return pd.concat([target_men, target_women], axis=0)
 
+def assign_groups(df, conditions, group_col='group'):
+    """
+    Assign group labels to a DataFrame based on given conditions.
 
+    Args:
+    - df (pd.DataFrame): The DataFrame to modify.
+    - conditions (dict): A dictionary of conditions and corresponding group labels.
+    - group_col (str): The name of the column to store group labels.
+
+    Returns:
+    - pd.DataFrame: The updated DataFrame with the group column.
+    """
+    df[group_col] = 'NotDefined'  # Default value
+    for condition, label in conditions.items():
+        df.loc[condition(df), group_col] = label
+    return df
