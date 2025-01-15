@@ -339,5 +339,5 @@ for covariate in covariates:
     print(f"Coeficiente observado ({covariate}): {observed_coef}")
     print(f"p-valor de la prueba de permutación ({covariate}): {p_value}")
 
-rain_cloud_plot_VI(longAll)
-rain_cloud_plot_VII(longAll)
+rain_cloud_plot_III(longAll)
+rain_cloud_plot_IV(longAll)

@@ -323,6 +323,6 @@ for covariate in covariates:
     print(f"Observed coeficient ({covariate}): {observed_coef:.3}")
     print(f"p-value of the permutation test ({covariate}): {p_value:.2e}")
 
-rain_cloud_plot_III(merged_df)
-rain_cloud_plot_V(merged_df)
+rain_cloud_plot_I(merged_df)
+rain_cloud_plot_II(merged_df)
 

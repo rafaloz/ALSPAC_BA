@@ -237,7 +237,7 @@ def fit_glm_and_get_all_coef(data, formula):
     model = glm(formula=formula, data=data, family=sm.families.Gaussian()).fit()
     return model.params
 
-def rain_cloud_plot_III(df_prev_copy):
+def rain_cloud_plot_I(df_prev_copy):
     import matplotlib
     import matplotlib.pyplot as plt
     import seaborn as sns
@@ -367,7 +367,7 @@ def rain_cloud_plot_III(df_prev_copy):
 
     plt.show()
 
-def rain_cloud_plot_V(df):
+def rain_cloud_plot_II(df):
 
     # Function to convert HEX to RGB
     def hex_to_rgb(hex_color):
@@ -476,7 +476,7 @@ def rain_cloud_plot_V(df):
 
     plt.show()
 
-def rain_cloud_plot_VI(df_prev_copy):
+def rain_cloud_plot_III(df_prev_copy):
     import matplotlib.pyplot as plt
     import seaborn as sns
     import pandas as pd
@@ -600,110 +600,7 @@ def rain_cloud_plot_VI(df_prev_copy):
 
     plt.show()
 
-def rain_cloud_plot_VIII(df):
-
-    # Function to convert HEX to RGB
-    def hex_to_rgb(hex_color):
-        hex_color = hex_color.lstrip('#')
-        return tuple(int(hex_color[i:i + 2], 16) / 255.0 for i in (0, 2, 4))
-
-    # Function to convert RGB to HEX
-    def rgb_to_hex(rgb_color):
-        return "#{:02x}{:02x}{:02x}".format(int(rgb_color[0] * 255), int(rgb_color[1] * 255), int(rgb_color[2] * 255))
-
-    # Function to interpolate between two colors
-    def interpolate_colors(start_color, end_color, n):
-        start_color = np.array(start_color)
-        end_color = np.array(end_color)
-        colors = [start_color + (end_color - start_color) * t for t in np.linspace(0, 1, n)]
-        hex_colors = [rgb_to_hex(color) for color in colors]
-        return hex_colors
-
-    # Define colors for the groups
-    purple_colors_light = '#C59CDC'  # Light purple
-    purple_colors_dark = '#6A3D9A'  # Dark purple
-
-    # Create the figure and axes
-    fig, ax = plt.subplots(figsize=(12, 8))
-
-    # Color palettes for the groups
-    palette_green_light = ['#A6E6A1', '#7AC96B', '#4CA743']  # Shades of green transitioning from light
-    palette_green_dark = ['#67C477', '#3E9E31', '#228B22']  # Darker shades of green
-
-    # Violin plot with no fill and switched axes (pliks18TH on x-axis, BrainPAD on y-axis)
-    sns.violinplot(
-        data=df,
-        x='pliks18TH_x',
-        y='DeltaBrainPAD',
-        palette= [purple_colors_dark] + ['#67C477'] + ['#3E9E31', '#228B22'],  # Color palette for violin outlines
-        linewidth=2.5,  # Line width for the violin outline
-        fill=False,
-        ax=ax,
-        inner=None
-    )
-
-    palette_1 =[purple_colors_light] + ['#A6E6A1'] + ['#7AC96B', '#4CA743']
-
-    # Overlay a boxplot with only the outline and no fill (facecolor='none')
-    for i, group in enumerate(sorted(df['pliks18TH_x'].unique())):
-        sns.boxplot(
-            data=df[df['pliks18TH_x'] == group],
-            x='pliks18TH_x',
-            y='DeltaBrainPAD',
-            width=0.5,  # Narrower box width
-            boxprops=dict(facecolor='none', edgecolor=palette_1[i], linewidth=2),  # Outline for each box with its own color
-            whiskerprops=dict(linewidth=2, color=palette_1[i]),  # Thicker whiskers with corresponding color
-            capprops=dict(linewidth=2, color=palette_1[i]),  # Thicker caps with corresponding color
-            medianprops=dict(linewidth=2, color=palette_1[i]),  # Thicker median line with corresponding color
-            showfliers=False,  # Optional: Hide outliers
-            ax=ax
-        )
-
-    # Scatter plot to match the violin outline colors
-    sns.stripplot(
-        data=df,
-        x='pliks18TH_x',
-        y='DeltaBrainPAD',
-        jitter=True,  # Add some jitter to the points
-        size=7,  # Control point size
-        palette=palette_1,  # Match scatter point color to the violin outline
-        alpha=0.4,
-        linewidth=0,  # Line width for scatter point edges
-        ax=ax
-    )
-
-    # Adding black points and labels for the mean for each group
-    for i, group in enumerate(sorted(df['pliks18TH_x'].unique())):
-        group_mean = df[df['pliks18TH_x'] == group]['DeltaBrainPAD'].mean()
-
-        # Add black point at the mean position
-        ax.scatter(
-            i,  # Position on the x-axis
-            group_mean,  # Position on the y-axis (mean value)
-            color='black',  # Black color for the point
-            s=70,  # Size of the point
-            zorder=3  # Ensure it appears on top of other elements
-        )
-
-        # Add text label for the mean with a box around it
-        ax.text(
-            i,  # Position on the x-axis
-            group_mean + 0.1,  # Position on the y-axis (mean + small offset)
-            f'Mean: {group_mean:.2f}',  # Text label showing the mean
-            horizontalalignment='center',
-            size='small',
-            color='black',
-            bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=0.3')  # Add a box around the text
-        )
-
-    # Customizing plot
-    plt.xlabel('pliks18TH_x', fontweight='bold')
-    plt.ylabel('DeltaBrainPAD', fontweight='bold')
-    plt.title('Violin Plot for brainPAD_standardized by grupo', fontweight='bold')
-
-    plt.show()
-
-def rain_cloud_plot_VII(df):
+def rain_cloud_plot_IV(df):
 
     # Function to convert HEX to RGB
     def hex_to_rgb(hex_color):
@@ -806,6 +703,109 @@ def rain_cloud_plot_VII(df):
 
     plt.show()
 
+def rain_cloud_plot_V(df):
+
+    # Function to convert HEX to RGB
+    def hex_to_rgb(hex_color):
+        hex_color = hex_color.lstrip('#')
+        return tuple(int(hex_color[i:i + 2], 16) / 255.0 for i in (0, 2, 4))
+
+    # Function to convert RGB to HEX
+    def rgb_to_hex(rgb_color):
+        return "#{:02x}{:02x}{:02x}".format(int(rgb_color[0] * 255), int(rgb_color[1] * 255), int(rgb_color[2] * 255))
+
+    # Function to interpolate between two colors
+    def interpolate_colors(start_color, end_color, n):
+        start_color = np.array(start_color)
+        end_color = np.array(end_color)
+        colors = [start_color + (end_color - start_color) * t for t in np.linspace(0, 1, n)]
+        hex_colors = [rgb_to_hex(color) for color in colors]
+        return hex_colors
+
+    # Define colors for the groups
+    purple_colors_light = '#C59CDC'  # Light purple
+    purple_colors_dark = '#6A3D9A'  # Dark purple
+
+    # Create the figure and axes
+    fig, ax = plt.subplots(figsize=(12, 8))
+
+    # Color palettes for the groups
+    palette_green_light = ['#A6E6A1', '#7AC96B', '#4CA743']  # Shades of green transitioning from light
+    palette_green_dark = ['#67C477', '#3E9E31', '#228B22']  # Darker shades of green
+
+    # Violin plot with no fill and switched axes (pliks18TH on x-axis, BrainPAD on y-axis)
+    sns.violinplot(
+        data=df,
+        x='pliks18TH_x',
+        y='DeltaBrainPAD',
+        palette= [purple_colors_dark] + ['#67C477'] + ['#3E9E31', '#228B22'],  # Color palette for violin outlines
+        linewidth=2.5,  # Line width for the violin outline
+        fill=False,
+        ax=ax,
+        inner=None
+    )
+
+    palette_1 =[purple_colors_light] + ['#A6E6A1'] + ['#7AC96B', '#4CA743']
+
+    # Overlay a boxplot with only the outline and no fill (facecolor='none')
+    for i, group in enumerate(sorted(df['pliks18TH_x'].unique())):
+        sns.boxplot(
+            data=df[df['pliks18TH_x'] == group],
+            x='pliks18TH_x',
+            y='DeltaBrainPAD',
+            width=0.5,  # Narrower box width
+            boxprops=dict(facecolor='none', edgecolor=palette_1[i], linewidth=2),  # Outline for each box with its own color
+            whiskerprops=dict(linewidth=2, color=palette_1[i]),  # Thicker whiskers with corresponding color
+            capprops=dict(linewidth=2, color=palette_1[i]),  # Thicker caps with corresponding color
+            medianprops=dict(linewidth=2, color=palette_1[i]),  # Thicker median line with corresponding color
+            showfliers=False,  # Optional: Hide outliers
+            ax=ax
+        )
+
+    # Scatter plot to match the violin outline colors
+    sns.stripplot(
+        data=df,
+        x='pliks18TH_x',
+        y='DeltaBrainPAD',
+        jitter=True,  # Add some jitter to the points
+        size=7,  # Control point size
+        palette=palette_1,  # Match scatter point color to the violin outline
+        alpha=0.4,
+        linewidth=0,  # Line width for scatter point edges
+        ax=ax
+    )
+
+    # Adding black points and labels for the mean for each group
+    for i, group in enumerate(sorted(df['pliks18TH_x'].unique())):
+        group_mean = df[df['pliks18TH_x'] == group]['DeltaBrainPAD'].mean()
+
+        # Add black point at the mean position
+        ax.scatter(
+            i,  # Position on the x-axis
+            group_mean,  # Position on the y-axis (mean value)
+            color='black',  # Black color for the point
+            s=70,  # Size of the point
+            zorder=3  # Ensure it appears on top of other elements
+        )
+
+        # Add text label for the mean with a box around it
+        ax.text(
+            i,  # Position on the x-axis
+            group_mean + 0.1,  # Position on the y-axis (mean + small offset)
+            f'Mean: {group_mean:.2f}',  # Text label showing the mean
+            horizontalalignment='center',
+            size='small',
+            color='black',
+            bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=0.3')  # Add a box around the text
+        )
+
+    # Customizing plot
+    plt.xlabel('pliks18TH_x', fontweight='bold')
+    plt.ylabel('DeltaBrainPAD', fontweight='bold')
+    plt.title('Violin Plot for brainPAD_standardized by grupo', fontweight='bold')
+
+    plt.show()
+
 def calculate_cohen_d(group1, group2):
     mean1, mean2 = np.mean(group1), np.mean(group2)
     std1, std2 = np.std(group1, ddof=1), np.std(group2, ddof=1)
@@ -848,8 +848,6 @@ def age_vs_predicted_age_figure(edades_test, pred_test):
 def model_evaluation(X_test, results):
 
     X_test_df = pd.read_csv(X_test)
-
-    etiv = X_test_df['eTIV'].values.tolist()
     edades_test = X_test_df['Age'].values.tolist()
 
     # Load Model
@@ -858,7 +856,7 @@ def model_evaluation(X_test, results):
         regresor = pickle.load(file)
 
     # predict age
-    prediction = regresor.predict(X_test_df.iloc[:, :-2].values)
+    prediction = regresor.predict(X_test_df.iloc[:, 3:].values)
 
     # bias correction
     df_bias_correction = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/Model/DataFrame_bias_correction.csv')
@@ -873,7 +871,6 @@ def model_evaluation(X_test, results):
     results['pred_Age_c'] = (prediction - intercept) / slope
     results['pred_Age'] = prediction
     results['BrainPAD'] = results['pred_Age_c'] - edades_test
-    results['eTIV'] = etiv
 
     return results
 

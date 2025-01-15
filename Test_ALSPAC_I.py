@@ -13,7 +13,6 @@ X_Cardiff = '/home/rafa/PycharmProjects/ALSPAC_BA/Data/ALSPAC_PE_I.csv'
 # Obtain predictions from ALSPAC data
 ALSPAC_results = pd.read_csv(X_Cardiff)
 results_Cardiff = model_evaluation(X_test, ALSPAC_results)
-pliks_info = ALSPAC_results[['ID', 'pliks18TH']]
 
 # Explicitly copy each slice to ensure they are independent DataFrames
 controlALSPAC = results_Cardiff[results_Cardiff['pliks18TH'] == 0].copy()
@@ -322,5 +321,5 @@ for covariate in covariates:
     print(f"Observed coeficient ({covariate}): {observed_coef:.3}")
     print(f"p-value of the permutation test ({covariate:}): {p_value:.2e}")
 
-rain_cloud_plot_III(merged_df)
-rain_cloud_plot_V(merged_df)
+rain_cloud_plot_I(merged_df)
+rain_cloud_plot_II(merged_df)

@@ -302,5 +302,5 @@ for covariate in covariates:
     print(f"p-valor de la prueba de permutación ({covariate}): {p_value}")
 
 # Custom Rain Cloud plots
-rain_cloud_plot_VI(longAll)
-rain_cloud_plot_VIII(longAll)
+rain_cloud_plot_III(longAll)
+rain_cloud_plot_V(longAll)
