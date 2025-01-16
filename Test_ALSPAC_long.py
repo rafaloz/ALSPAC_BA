@@ -317,8 +317,8 @@ for covariate in covariates:
     p_values[covariate] = p_value
 
     # Print the observed coefficient and the p-value for each covariate
-    print(f"Coeficiente observado ({covariate}): {observed_coef:.3}")
-    print(f"p-valor de la prueba de permutación ({covariate}): {p_value:.2e}")
+    print(f"Observed Coefficient ({covariate}): {observed_coef:.3}")
+    print(f"p-value of the permutation test ({covariate}): {p_value:.2e}")
 
 rain_cloud_plot_III(longAll)
 rain_cloud_plot_IV(longAll)
