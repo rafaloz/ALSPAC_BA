@@ -181,9 +181,7 @@ else:
 
 PEs_ALSPAC['Group'] = 'PE_1-3'
 merged_df = pd.concat([controlALSPAC, PEs_ALSPAC], axis=0)
-df = merged_df[['ID', 'BrainPAD', 'brainPAD_standardized', 'Age', 'sex', 'Group', 'pliks18TH', 'eTIV']]
-
-merged_df['n_euler'] = 2
+df = merged_df[['ID', 'BrainPAD', 'brainPAD_standardized', 'Age', 'sex', 'Group', 'pliks18TH', 'n_euler']]
 
 print('--------------------------------')
 print('====== PAIRWISE ANALYSIS =======')

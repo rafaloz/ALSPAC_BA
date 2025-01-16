@@ -5,68 +5,46 @@ from utils import *
 
 from scipy.stats import shapiro, chi2_contingency, kruskal
 
-ALSPAC_I_merged = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/Data/ALSPAC_I_merged.csv')
-ALSPAC_II_merged = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/Data/ALSPAC_II_merged.csv')
+X_test_ALSPAC_I = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/Data/ALSPAC_I_merged.csv')
+X_test_ALSPAC_II = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/Data/ALSPAC_II_merged.csv')
 
-# Example: rename 'ID' for ALSPAC_II_merged if needed
-new_values = [value[4:] + '_brain' for value in ALSPAC_II_merged['ID']]
-ALSPAC_II_merged['ID'] = new_values
-
-# Keep only subjects who appear in both data frames
-X_test_Cardiff_I = ALSPAC_I_merged[ALSPAC_I_merged['ID'].isin(ALSPAC_II_merged['ID'])]
-X_test_Cardiff_II = ALSPAC_II_merged[ALSPAC_II_merged['ID'].isin(ALSPAC_I_merged['ID'])]
-
-# For X_test_Cardiff_II
-X_test_Cardiff_II.loc[X_test_Cardiff_II['pliks18TH'] == 0, 'group'] = '0'
-X_test_Cardiff_II.loc[X_test_Cardiff_II['pliks18TH'] == 1, 'group'] = '1'
-X_test_Cardiff_II.loc[X_test_Cardiff_II['pliks18TH'] == 2, 'group'] = '2'
-X_test_Cardiff_II.loc[X_test_Cardiff_II['pliks18TH'] == 3, 'group'] = '3'
+# For X_test_ALSPAC_II
+X_test_ALSPAC_II.loc[X_test_ALSPAC_II['pliks18TH'] == 0, 'group'] = 'Control'
+X_test_ALSPAC_II.loc[X_test_ALSPAC_II['pliks18TH'] == 1, 'group'] = 'Suspected'
+X_test_ALSPAC_II.loc[X_test_ALSPAC_II['pliks18TH'] == 2, 'group'] = 'Definite'
+X_test_ALSPAC_II.loc[X_test_ALSPAC_II['pliks18TH'] == 3, 'group'] = 'Clinical Disorder'
 
 # Copy pliks30TH from II into I
-X_test_Cardiff_I['pliks30TH'] = X_test_Cardiff_II['pliks30TH'].values
+X_test_ALSPAC_I['pliks30TH'] = X_test_ALSPAC_II['pliks30TH'].values
 
-# For X_test_Cardiff_I
-X_test_Cardiff_I.loc[X_test_Cardiff_I['pliks18TH'] == 0, 'group'] = '0'
-X_test_Cardiff_I.loc[X_test_Cardiff_I['pliks18TH'] == 1, 'group'] = '1'
-X_test_Cardiff_I.loc[X_test_Cardiff_I['pliks18TH'] == 2, 'group'] = '2'
-X_test_Cardiff_I.loc[X_test_Cardiff_I['pliks18TH'] == 3, 'group'] = '3'
+# For X_test_ALSPAC_I
+X_test_ALSPAC_I.loc[X_test_ALSPAC_I['pliks18TH'] == 0, 'group'] = 'Control'
+X_test_ALSPAC_I.loc[X_test_ALSPAC_I['pliks18TH'] == 1, 'group'] = 'Suspected'
+X_test_ALSPAC_I.loc[X_test_ALSPAC_I['pliks18TH'] == 2, 'group'] = 'Definite'
+X_test_ALSPAC_I.loc[X_test_ALSPAC_I['pliks18TH'] == 3, 'group'] = 'Clinical Disorder'
 
-Longi_I_cardiff = X_test_Cardiff_I[[
-    'ID', 'Age', 'sex', 'pliks18TH', 'pliks20TH', 'pliks30TH',
-    'brainPAD_standardized', 'group'
-]]
-Longi_I_cardiff = Longi_I_cardiff.rename(columns={
-    'brainPAD_standardized': 'brainPAD_standardized_I',
-    'group': 'group_I',
-    'Age': 'Age_I',
-    'sex': 'sex_I'
-})
+Long_I_cardiff = X_test_ALSPAC_I[['ID', 'Age', 'sex', 'pliks18TH', 'pliks20TH', 'pliks30TH', 'brainPAD_standardized', 'group']]
+Long_I_cardiff['Time'] = 'I'
+Long_I_cardiff = Long_I_cardiff.rename(columns={'brainPAD_standardized': 'brainPAD_standardized_I', 'group': 'group_I','Age': 'Age_I','sex': 'sex_I'})
 
-Longi_II_cardiff = X_test_Cardiff_II[[
-    'ID', 'Age', 'sex', 'pliks18TH', 'pliks20TH', 'pliks30TH',
-    'brainPAD_standardized', 'group'
-]]
-Longi_II_cardiff = Longi_II_cardiff.rename(columns={
-    'brainPAD_standardized': 'brainPAD_standardized_II',
-    'group': 'group_II',
-    'Age': 'Age_II',
-    'sex': 'sex_II'
-})
+Long_II_cardiff = X_test_ALSPAC_II[['ID', 'Age', 'sex', 'pliks18TH', 'pliks20TH', 'pliks30TH', 'brainPAD_standardized', 'group', 'n_euler']]
+Long_I_cardiff['Time'] = 'II'
+Long_II_cardiff = Long_II_cardiff.rename(columns={'brainPAD_standardized': 'brainPAD_standardized_II', 'group': 'group_II', 'Age': 'Age_II', 'sex': 'sex_II'})
 
 # Merge both timepoints
-longAll = pd.merge(Longi_I_cardiff, Longi_II_cardiff, on='ID', how='inner')
+longAll = pd.merge(Long_I_cardiff, Long_II_cardiff, on='ID', how='inner')
 
 # Compute DeltaBrainPAD
 longAll['DeltaBrainPAD'] = longAll['brainPAD_standardized_II'] - longAll['brainPAD_standardized_I']
 longAll['Age_dif'] = longAll['Age_II'] - longAll['Age_I']
 
-Control_Cardiff = longAll[longAll['group_II'] == '0']
-NoPersist_Cardiff = longAll[longAll['group_II'] == '1']
-Persist_Cardiff = longAll[longAll['group_II'] == '2']
-Incident_Cardiff = longAll[longAll['group_II'] == '3']
+Control_Cardiff = longAll[longAll['group_II'] == 'Control']
+Suspected_Cardiff = longAll[longAll['group_II'] == 'Suspected']
+Definite_Cardiff = longAll[longAll['group_II'] == 'Definite']
+CD_Cardiff = longAll[longAll['group_II'] == 'Clinical Disorder']
 
 # Example: combine subgroups "1", "2", "3" if needed
-LongPE = pd.concat([NoPersist_Cardiff, Persist_Cardiff, Incident_Cardiff], ignore_index=True)
+LongPE = pd.concat([Suspected_Cardiff, Definite_Cardiff, CD_Cardiff], ignore_index=True)
 
 # Example aggregated stats
 summary_stats = longAll.groupby('group_II').agg(
@@ -89,9 +67,9 @@ print(summary_stats.to_string(), '\n')
 
 groups = {
     "0": Control_Cardiff['DeltaBrainPAD'].values,
-    "1": NoPersist_Cardiff['DeltaBrainPAD'].values,
-    "2": Persist_Cardiff['DeltaBrainPAD'].values,
-    "3": Incident_Cardiff['DeltaBrainPAD'].values,
+    "1": Suspected_Cardiff['DeltaBrainPAD'].values,
+    "2": Definite_Cardiff['DeltaBrainPAD'].values,
+    "3": CD_Cardiff['DeltaBrainPAD'].values,
     "123": LongPE['DeltaBrainPAD'].values
 }
 
@@ -104,17 +82,51 @@ pairs = [
     ("1", "3"),
     ("2", "3")
 ]
-print("====== Cohen's D ======")
-for p in pairs:
-    d_val = calculate_cohen_d(groups[p[0]], groups[p[1]])
-    print(f"Cohen's D {p[0]} vs {p[1]}: {d_val:.3f}")
-print()
 
-hue_order = ['Remitted', 'LControl', 'Persistent', 'Incident']
-labels = ['Longitudinal Controls', 'Incident', 'Remittent', 'Persistent']
+# Calculate Cohen's D for each pair
+results = {}
+for pair in pairs:
+    key = f"{pair[0]}_{pair[1]}"
+    results[key] = calculate_cohen_d(groups[pair[0]], groups[pair[1]])
+
+# Print results
+print("=" * 60)
+print("       Cohen's D Calculations for DeltaBrainPAD       ")
+print("=" * 60)
+for key, value in results.items():
+    print(f"Cohen's D {key}: {value:.2f}")
+print("=" * 60)
+
+# Create a new column based on the old column values
+mapping = { 'Control': 0, 'Suspected': 1, 'Definite': 2, 'Clinical Disorder': 3}
+longAll['group_ordinal'] = longAll['group_II'].map(mapping).astype(int)
+
+# Reshape data into long format
+timepoint_I = longAll[['ID', 'Age_I', 'sex_I', 'brainPAD_standardized_I', 'group_I', 'n_euler']].copy()
+timepoint_I['Time'] = 'I'
+timepoint_I.rename(columns={
+    'Age_I': 'Age',
+    'sex_I': 'sex',
+    'brainPAD_standardized_I': 'brainPAD_standardized',
+    'group_I': 'group'
+}, inplace=True)
+
+timepoint_II = longAll[['ID', 'Age_II', 'sex_II', 'brainPAD_standardized_II', 'group_II', 'n_euler']].copy()
+timepoint_II['Time'] = 'II'
+timepoint_II.rename(columns={
+    'Age_II': 'Age',
+    'sex_II': 'sex',
+    'brainPAD_standardized_II': 'brainPAD_standardized',
+    'group_II': 'group'
+}, inplace=True)
+
+long_data = pd.concat([timepoint_I, timepoint_II], ignore_index=True)
+
+hue_order = ['Control', 'Suspected', 'Definite', 'Clinical Disorder']
+labels = ['Controls', 'Suspected', 'Definite', 'Clinical Disorder']
 
 # Plot observed means by group at each timepoint
-sns.lineplot(data=longAll, x='Time', y='brainPAD_standardized', hue='group', estimator='mean', marker='o')
+sns.lineplot(data=long_data, x='Time', y='brainPAD_standardized', hue='group', estimator='mean', marker='o')
 
 plt.title('Brain Age Predictions Timepoints')
 plt.xlabel('Time')
@@ -178,15 +190,12 @@ timepoint_II.rename(columns={
 }, inplace=True)
 
 long_data = pd.concat([timepoint_I, timepoint_II], ignore_index=True)
-# (Add a 'n_euler' column if needed)
-long_data['n_euler'] = 2  # example
 
 print('===== Permutation test =====')
 
 longAll['group_cat'] = np.where(longAll['group_II'] == '0', 0, 1)  # e.g. '0' is control vs everything else
-longAll['n_euler'] = 2
 
-n_permutations = 5000
+n_permutations = 100000
 formula_perm = "DeltaBrainPAD ~ group_cat + n_euler + Age_dif"
 covariates = ['group_cat', 'n_euler', 'Age_dif']
 
@@ -257,7 +266,7 @@ print(f"p-value: {p:.2e}")
 print('===== Permutation test =====')
 
 # Merge the DataFrames on 'ID'
-n_permutations = 5000
+n_permutations = 100000
 formula = 'DeltaBrainPAD ~ pliks18TH_x + n_euler + Age_dif'
 
 # Coefficients of interest

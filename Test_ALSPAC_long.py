@@ -4,18 +4,9 @@ warnings.filterwarnings("ignore")
 from utils import *
 
 from scipy.stats import kruskal, chi2_contingency
-from scipy import stats
-import seaborn as sns
-import matplotlib.pyplot as plt
 
-ALSPAC_I_merged = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/Data/ALSPAC_I_merged.csv')
-ALSPAC_II_merged = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/Data/ALSPAC_II_merged.csv')
-
-new_values = [value[4:] + '_brain' for value in ALSPAC_II_merged['ID']]
-ALSPAC_II_merged['ID'] = new_values
-
-X_test_Cardiff_I = ALSPAC_I_merged[ALSPAC_I_merged['ID'].isin(ALSPAC_II_merged['ID'])]
-X_test_Cardiff_II = ALSPAC_II_merged[ALSPAC_II_merged['ID'].isin(ALSPAC_I_merged['ID'])]
+X_test_ALSPAC_I = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/Data/ALSPAC_I_merged.csv')
+X_test_ALSPAC_II = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/Data/ALSPAC_II_merged.csv')
 
 group_conditions = {
     lambda df: (df['pliks18TH'] >= 1) & (df['pliks30TH'] >= 1): 'Persistent',
@@ -24,26 +15,27 @@ group_conditions = {
     lambda df: (df['pliks18TH'] == 0) & (df['pliks30TH'] >= 1): 'Incident',
 }
 
-# Assign groups to X_test_Cardiff_II
-X_test_Cardiff_II = assign_groups(X_test_Cardiff_II, group_conditions)
+# Assign groups to X_test_ALSPAC_II
+X_test_ALSPAC_II = assign_groups(X_test_ALSPAC_II, group_conditions)
 
-# Add pliks30TH from X_test_Cardiff_II to X_test_Cardiff_I
-X_test_Cardiff_I['pliks30TH'] = X_test_Cardiff_II['pliks30TH'].values
+# Add pliks30TH from X_test_ALSPAC_II to X_test_ALSPAC_I
+X_test_ALSPAC_I['pliks30TH'] = X_test_ALSPAC_II['pliks30TH'].values
 
-# Assign groups to X_test_Cardiff_I
-X_test_Cardiff_I = assign_groups(X_test_Cardiff_I, group_conditions)
+# Assign groups to X_test_ALSPAC_I
+X_test_ALSPAC_I = assign_groups(X_test_ALSPAC_I, group_conditions)
 
 # Rename columns for timepoints
-Longi_I_cardiff = X_test_Cardiff_I[['ID', 'Age', 'sex', 'pliks18TH', 'pliks20TH', 'pliks30TH', 'brainPAD_standardized', 'group']]
-Longi_II_cardiff = X_test_Cardiff_II[['ID', 'Age', 'sex', 'pliks18TH', 'pliks20TH', 'pliks30TH', 'brainPAD_standardized', 'group']]
-Longi_I_cardiff = Longi_I_cardiff.rename(columns={'brainPAD_standardized': 'brainPAD_standardized_I', 'group': 'group_I', 'Age': 'Age_I', 'sex': 'sex_I'})
-Longi_II_cardiff = Longi_II_cardiff.rename(columns={'brainPAD_standardized': 'brainPAD_standardized_II', 'group': 'group_II', 'Age': 'Age_II', 'sex': 'sex_II'})
+Long_I_cardiff = X_test_ALSPAC_I[['ID', 'Age', 'sex', 'pliks18TH', 'pliks20TH', 'pliks30TH', 'brainPAD_standardized', 'group']]
+Long_II_cardiff = X_test_ALSPAC_II[['ID', 'Age', 'sex', 'brainPAD_standardized', 'group', 'n_euler']]
+Long_I_cardiff = Long_I_cardiff.rename(columns={'brainPAD_standardized': 'brainPAD_standardized_I', 'group': 'group_I', 'Age': 'Age_I', 'sex': 'sex_I'})
+Long_II_cardiff = Long_II_cardiff.rename(columns={'brainPAD_standardized': 'brainPAD_standardized_II', 'group': 'group_II', 'Age': 'Age_II', 'sex': 'sex_II'})
 
 # Merge longitudinal data
-longAll = pd.merge(Longi_I_cardiff, Longi_II_cardiff, on='ID', how='inner')
+longAll = pd.merge(Long_I_cardiff, Long_II_cardiff, on='ID', how='inner')
 
 # Calculate DeltaBrainPAD
 longAll['DeltaBrainPAD'] = longAll['brainPAD_standardized_II'] - longAll['brainPAD_standardized_I']
+longAll['Age_dif'] = longAll['Age_II'] - longAll['Age_I']
 
 LControl_ALSPAC = longAll[longAll['group_II']=='LControl']
 Remitted_ALSPAC = longAll[longAll['group_II']=='Remitted']
@@ -64,22 +56,8 @@ summary_stats = longAll.groupby('group_II').agg(
 
 LongPE = pd.concat([Persistent_ALSPAC, Incident_ALSPAC, Remitted_ALSPAC], axis=0, ignore_index=True)
 
-total_stats_pe = pd.DataFrame({
-    'num_cases': [LongPE.shape[0]],
-    'mean_age': [LongPE['Age_II'].mean()],
-    'std_age': [LongPE['Age_II'].std()],
-    'age_range_min': [LongPE['Age_II'].min()],
-    'age_range_max': [LongPE['Age_II'].max()],
-    'num_males': [LongPE['sex_II'].sum()],
-    'num_females': [LongPE.shape[0] - LongPE['sex_II'].sum()],
-    'mean_delta_brainPAD': [LongPE['DeltaBrainPAD'].mean()],
-}, index=['PE'])
-
-# Adding the total PE stats to summary
-summary_stats = pd.concat([summary_stats, total_stats_pe])
-
 # Define the desired order for the rows
-desired_order = ['Incident', 'Persistent', 'Remitted', 'LControl', 'PE']
+desired_order = ['Incident', 'Persistent', 'Remitted', 'LControl']
 
 # Reorder the rows
 summary_stats = summary_stats.reindex(desired_order)
@@ -128,7 +106,6 @@ print("=" * 60)
 # Create a new column based on the old column values
 mapping = {'LControl': 1, 'Remitted': 0, 'Persistent': 2, 'Incident': 3}
 longAll['group_ordinal'] = longAll['group_II'].map(mapping).astype(int)
-longAll['n_euler'] = 2
 
 # Reshape data into long format
 timepoint_I = longAll[['ID', 'Age_I', 'sex_I', 'brainPAD_standardized_I', 'group_I', 'n_euler']].copy()
@@ -151,11 +128,15 @@ timepoint_II.rename(columns={
 
 long_data = pd.concat([timepoint_I, timepoint_II], ignore_index=True)
 
-hue_order = ['Remitted', 'LControl', 'Persistent', 'Incident']
-labels = ['Longitudinal Controls', 'Incident', 'Remittent', 'Persistent']
+palette = {
+    'LControl': '#1f77b4',  # Blue
+    'Incident': '#ff7f0e',  # Orange
+    'Remitted': '#2ca02c',  # Green
+    'Persistent': '#d62728'  # Red
+}
 
 # Plot observed means by group at each timepoint
-sns.lineplot(data=long_data, x='Time', y='brainPAD_standardized', hue='group', estimator='mean', marker='o')
+sns.lineplot(data=long_data, x='Time', y='brainPAD_standardized', hue='group', estimator='mean', marker='o', palette=palette)
 
 plt.title('Brain Age Predictions Timepoints')
 plt.xlabel('Time')
@@ -163,7 +144,7 @@ plt.ylabel('Brain Age (Predicted)')
 
 # Get current legend and change labels
 handles, _ = plt.gca().get_legend_handles_labels()
-plt.legend(handles=handles, labels=labels, title='Group')
+plt.legend(title='Group')
 
 plt.show()
 
@@ -336,8 +317,8 @@ for covariate in covariates:
     p_values[covariate] = p_value
 
     # Print the observed coefficient and the p-value for each covariate
-    print(f"Coeficiente observado ({covariate}): {observed_coef}")
-    print(f"p-valor de la prueba de permutación ({covariate}): {p_value}")
+    print(f"Coeficiente observado ({covariate}): {observed_coef:.3}")
+    print(f"p-valor de la prueba de permutación ({covariate}): {p_value:.2e}")
 
 rain_cloud_plot_III(longAll)
 rain_cloud_plot_IV(longAll)

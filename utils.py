@@ -855,8 +855,18 @@ def model_evaluation(X_test, results):
     with open(file_path, 'rb') as file:
         regresor = pickle.load(file)
 
-    # predict age
-    prediction = regresor.predict(X_test_df.iloc[:, 3:].values)
+    # Determine the number of columns in the dataframe
+    if X_test_df.shape[1] == 102:
+        # Use slicing for 102 columns
+        input_features = X_test_df.iloc[:, :-2].values
+    elif X_test_df.shape[1] == 103:
+        # Use slicing for 103 columns
+        input_features = X_test_df.iloc[:, 3:].values
+    else:
+        raise ValueError(f"Unexpected number of columns: {X_test_df.shape[1]}")
+
+    # Predict age
+    prediction = regresor.predict(input_features)
 
     # bias correction
     df_bias_correction = pd.read_csv('/home/rafa/PycharmProjects/ALSPAC_BA/Model/DataFrame_bias_correction.csv')
