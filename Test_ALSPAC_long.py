@@ -190,7 +190,7 @@ print(f"p-value: {p:.2e}")
 print('===== Permutation test =====')
 
 # Merge the DataFrames on 'ID'
-n_permutations = 5000
+n_permutations = 100000
 formula = 'DeltaBrainPAD ~ group_cat + n_euler + Age_dif'
 
 # Coefficients of interest
@@ -276,7 +276,7 @@ print(f"p-value: {p:.2e}")
 print('===== Permutation test =====')
 
 # Merge the DataFrames on 'ID'
-n_permutations = 5000
+n_permutations = 100000
 formula = 'DeltaBrainPAD ~ group_ordinal + n_euler + Age_dif'
 
 # Coefficients of interest
