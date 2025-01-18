@@ -8,13 +8,12 @@ from sklearn.metrics import mean_absolute_percentage_error
 from sklearn.neural_network import MLPRegressor
 
 from sklearn.linear_model import LinearRegression
-from scipy.stats import pearsonr
 
 import statsmodels.api as sm
 from statsmodels.formula.api import glm
 
 from feature_engine.selection import SmartCorrelatedSelection
-from scipy.stats import ks_2samp, ttest_ind
+from scipy.stats import ks_2samp
 import infoselect as inf
 
 from scipy import stats
@@ -524,7 +523,7 @@ def rain_cloud_plot_III(df_prev_copy):
     green_colors_dark = '#228B22'  # Dark green
 
     # Generate gradient colors for different groups
-    palette_1 = interpolate_colors(hex_to_rgb(purple_colors_light), hex_to_rgb(green_colors_light), len(groups))
+    palette_1 = interpolate_colors(hex_to_rgb(green_colors_light), hex_to_rgb(purple_colors_light), len(groups))
 
     # Create the figure and axes
     fig, ax = plt.subplots(figsize=(10, 6))

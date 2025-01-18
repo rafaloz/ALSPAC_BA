@@ -143,7 +143,6 @@ plt.xlabel('Time')
 plt.ylabel('Brain Age (Predicted)')
 
 # Get current legend and change labels
-handles, _ = plt.gca().get_legend_handles_labels()
 plt.legend(title='Group')
 
 plt.show()
@@ -168,7 +167,7 @@ for group in sorted(longAll['group_cat'].unique()):
     print(f"Group {group}: W-statistic={stat:.3}, p-value={p_value:.2e}")
 
 # Levene's Test for Homogeneity of Variances
-w, p_value = stats.levene(*[longAll[longAll['group_cat'] == group]['Age_II'] for group in sorted(longAll['group_II'].unique())])
+w, p_value = stats.levene(*[longAll[longAll['group_cat'] == group]['Age_II'] for group in sorted(longAll['group_cat'].unique())])
 print(f"\nLevene's Test (Age): W-statistic={w:.3}, p-value={p_value:.2e}")
 
 # Extract unique groups
@@ -190,7 +189,7 @@ print(f"p-value: {p:.2e}")
 print('===== Permutation test =====')
 
 # Merge the DataFrames on 'ID'
-n_permutations = 100000
+n_permutations = 5000
 formula = 'DeltaBrainPAD ~ group_cat + n_euler + Age_dif'
 
 # Coefficients of interest
@@ -276,7 +275,7 @@ print(f"p-value: {p:.2e}")
 print('===== Permutation test =====')
 
 # Merge the DataFrames on 'ID'
-n_permutations = 100000
+n_permutations = 5000
 formula = 'DeltaBrainPAD ~ group_ordinal + n_euler + Age_dif'
 
 # Coefficients of interest

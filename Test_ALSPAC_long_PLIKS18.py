@@ -122,19 +122,22 @@ timepoint_II.rename(columns={
 
 long_data = pd.concat([timepoint_I, timepoint_II], ignore_index=True)
 
-hue_order = ['Control', 'Suspected', 'Definite', 'Clinical Disorder']
-labels = ['Controls', 'Suspected', 'Definite', 'Clinical Disorder']
+palette = {
+    'Control': '#1f77b4',  # Blue
+    'Suspected': '#ff7f0e',  # Orange
+    'Definite': '#2ca02c',  # Green
+    'Clinical Disorder': '#d62728'  # Red
+}
 
 # Plot observed means by group at each timepoint
-sns.lineplot(data=long_data, x='Time', y='brainPAD_standardized', hue='group', estimator='mean', marker='o')
+sns.lineplot(data=long_data, x='Time', y='brainPAD_standardized', hue='group', estimator='mean', marker='o', palette=palette)
 
 plt.title('Brain Age Predictions Timepoints')
 plt.xlabel('Time')
 plt.ylabel('Brain Age (Predicted)')
 
 # Get current legend and change labels
-handles, _ = plt.gca().get_legend_handles_labels()
-plt.legend(handles=handles, labels=labels, title='Group')
+plt.legend(title='Group')
 
 plt.show()
 
@@ -193,9 +196,9 @@ long_data = pd.concat([timepoint_I, timepoint_II], ignore_index=True)
 
 print('===== Permutation test =====')
 
-longAll['group_cat'] = np.where(longAll['group_II'] == '0', 0, 1)  # e.g. '0' is control vs everything else
+longAll['group_cat'] = np.where(longAll['group_ordinal'] == 0, 0, 1)  # e.g. '0' is control vs everything else
 
-n_permutations = 100000
+n_permutations = 5000
 formula_perm = "DeltaBrainPAD ~ group_cat + n_euler + Age_dif"
 covariates = ['group_cat', 'n_euler', 'Age_dif']
 
@@ -266,7 +269,7 @@ print(f"p-value: {p:.2e}")
 print('===== Permutation test =====')
 
 # Merge the DataFrames on 'ID'
-n_permutations = 100000
+n_permutations = 5000
 formula = 'DeltaBrainPAD ~ pliks18TH_x + n_euler + Age_dif'
 
 # Coefficients of interest
