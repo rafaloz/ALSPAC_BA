@@ -1,0 +1,33 @@
+machine,code
+CARDIFF_MPRAGE,0
+CamCan_SIEMENS_MAGNETOM_TrioTim_syngo_MR_3T,1
+CoRR_BMB_1_Siemens_TrioTim,2
+CoRR_BNU_1_Siemens_TrioTim,3
+CoRR_BNU_2_Siemens_TrioTim,4
+CoRR_HNU_1_GE_Discovery MR750,5
+CoRR_IACAS_GE_Signa HDx,6
+CoRR_IBATRT_Siemens_TrioTim,7
+CoRR_IPCAS_1_Siemens_TrioTim,8
+CoRR_IPCAS_3_Siemens_TrioTim,9
+CoRR_IPCAS_4_GE_Discovery,10
+CoRR_IPCAS_5_Siemens_TrioTim,11
+CoRR_IPCAS_7_Siemens_TrioTim,12
+CoRR_NYU_1_Siemens_Allegra,13
+CoRR_NYU_2_Siemens_Allegra,14
+CoRR_SWU_1_Siemens_TrioTim,15
+CoRR_SWU_2_Siemens_TrioTim,16
+CoRR_SWU_3_Siemens_TrioTim,17
+CoRR_SWU_4_Siemens_TrioTim,18
+CoRR_UPSM_1_Siemens_TrioTim,19
+CoRR_UWM_GE_Discovery,20
+DLBS_SIEMENS_MAGNETOM_TrioTim_syngo_MR_3T,21
+IXI_GE_1.5T_system,22
+IXI_Philips_Medical_Systems_Intera_3T,23
+MR_ART_Siemens_Magnetom_Prisma_3T,24
+NIHMFSPGR_Philips_Achieva_3T,25
+NIHMMPRAGE_Philips_Achieva_3T,26
+NKI_SIEMENS_MAGNETOM_TrioTim_syngo_MR_3T,27
+NeuroCog_3T_GE_Discovery_MR750,28
+NeuroCog_3T_Siemens_TimTrio_MRI,29
+OASIS_1.5-T_Vision_scanner,30
+SALD_SIEMENS_MAGNETOM_TrioTim_syngo_MR_3T,31

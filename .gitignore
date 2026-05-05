@@ -1,0 +1,30 @@
+# Local-only paper PDFs (not redistributed)
+paper/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Outputs (generated; do not commit)
+figures/*.svg
+figures/*.png
+figures/*.pdf
+!figures/.gitkeep
+
+# Vendored neuroharmonize build artefacts
+neuroharmonize/build/
+neuroharmonize/dist/
+
+# Private ID mapping (real -> anonymised)
+tools/id_mapping.csv

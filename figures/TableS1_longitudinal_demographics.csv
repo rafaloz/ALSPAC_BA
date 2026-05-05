@@ -1,0 +1,6 @@
+Definition,Group,N,Age (mean +/- SD),Sex (F/M),Scanner
+LPEs-1 (PLIKS-18),Controls,61,20.21 +/- 0.61,40/21 (65.6% F),CARDIFF_ESCANER: 61
+LPEs-1 (PLIKS-18),Suspected,18,20.56 +/- 0.51,10/8 (55.6% F),CARDIFF_ESCANER: 18
+LPEs-1 (PLIKS-18),Definite,22,19.77 +/- 0.43,15/7 (68.2% F),CARDIFF_ESCANER: 22
+LPEs-1 (PLIKS-18),Clinical Disorder,12,20.08 +/- 0.79,9/3 (75.0% F),CARDIFF_ESCANER: 12
+LPEs-1 (PLIKS-18),PEs (any),52,20.12 +/- 0.65,34/18 (65.4% F),CARDIFF_ESCANER: 52

@@ -1,0 +1,5 @@
+cohort,prediction,n_ctrl,n_PE,mean_ctrl,mean_PE,cohen_d
+ALSPAC-20 MRI-I,raw,124,121,1.725,2.885,0.327
+ALSPAC-20 MRI-I,bias-corrected,124,121,-0.853,0.737,0.323
+ALSPAC-30 MRI-II,raw,210,69,-1.216,0.295,0.303
+ALSPAC-30 MRI-II,bias-corrected,210,69,-0.619,1.367,0.289

@@ -1,0 +1,9 @@
+cohort,n,prediction,MAE,R2,Pearson_r
+TestSet,263,raw,3.715,0.735,0.858
+TestSet,263,bias-corrected,4.494,0.641,0.858
+AgeRisk,105,raw,4.269,0.719,0.85
+AgeRisk,105,bias-corrected,4.731,0.63,0.85
+ALSPAC-20 MRI-I,245,raw,3.336,-47.618,0.108
+ALSPAC-20 MRI-I,245,bias-corrected,3.794,-66.942,0.108
+ALSPAC-30 MRI-II,279,raw,4.222,-18.559,0.169
+ALSPAC-30 MRI-II,279,bias-corrected,5.591,-35.32,0.169

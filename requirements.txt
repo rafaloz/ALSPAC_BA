@@ -1,0 +1,12 @@
+matplotlib>=3.10
+nibabel>=5.3
+numpy>=2.0
+pandas>=2.2
+pingouin>=0.5
+scikit-learn>=1.6
+scipy>=1.15
+seaborn>=0.13
+statsmodels>=0.14
+tabulate>=0.9
+torch>=2.3
+torchmetrics>=1.0

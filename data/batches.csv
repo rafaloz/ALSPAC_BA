@@ -1,0 +1,37 @@
+batch_num,scanner_name,n_ids
+0,CARDIFF_MPRAGE,115
+1,CamCan_SIEMENS_MAGNETOM_TrioTim_syngo_MR_3T,286
+2,CoRR_BMB_1_Siemens_TrioTim,43
+3,CoRR_BNU_1_Siemens_TrioTim,57
+4,CoRR_BNU_2_Siemens_TrioTim,56
+5,CoRR_HNU_1_GE_Discovery MR750,20
+6,CoRR_IACAS_GE_Signa HDx,28
+7,CoRR_IBATRT_Siemens_TrioTim,36
+8,CoRR_IPCAS_1_Siemens_TrioTim,30
+9,CoRR_IPCAS_2_Siemens_TrioTim,34
+10,CoRR_IPCAS_3_Siemens_TrioTim,35
+11,CoRR_IPCAS_4_GE_Discovery,20
+12,CoRR_IPCAS_5_Siemens_TrioTim,22
+13,CoRR_IPCAS_7_Siemens_TrioTim,45
+14,CoRR_LMU_1_Philips_Achieva,27
+15,CoRR_NYU_1_Siemens_Allegra,24
+16,CoRR_NYU_2_Siemens_Allegra,169
+17,CoRR_SWU_1_Siemens_TrioTim,20
+18,CoRR_SWU_2_Siemens_TrioTim,27
+19,CoRR_SWU_3_Siemens_TrioTim,23
+20,CoRR_SWU_4_Siemens_TrioTim,234
+21,CoRR_UPSM_1_Siemens_TrioTim,96
+22,CoRR_UWM_GE_Discovery,25
+23,DLBS_SIEMENS_MAGNETOM_TrioTim_syngo_MR_3T,115
+24,IXI_GE_1.5T_system,42
+25,IXI_Philips_Medical_Systems_Gyroscan_Intera_1.5T,120
+26,IXI_Philips_Medical_Systems_Intera_3T,86
+27,MR_ART_Siemens_Magnetom_Prisma_3T,110
+28,NIHMFSPGR_Philips_Achieva_3T,51
+29,NIHMMPRAGE_Philips_Achieva_3T,77
+30,NKI_SIEMENS_MAGNETOM_TrioTim_syngo_MR_3T,292
+31,NeuroCog_3T_GE_Discovery_MR750,146
+32,NeuroCog_3T_Siemens_TimTrio_MRI,26
+33,OASIS_1.5-T_Vision_scanner,127
+34,SALD_SIEMENS_MAGNETOM_TrioTim_syngo_MR_3T,145
+35,UVA_Philips_Achieva_3T_MRI,223
